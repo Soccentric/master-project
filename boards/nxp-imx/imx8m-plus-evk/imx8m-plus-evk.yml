@@ -50,13 +50,13 @@ repos:
     path: sources/imx8m-plus-evk/meta-freescale-distro
 local_conf_header:
   standard: 'CONF_VERSION = "2"
+    DL_DIR = "/workspace/downloads"
 
     MACHINE = "imx8mpevk"'
   custom-local-conf: 'ACCEPT_FSL_EULA = "1"
 
     DL_DIR = "${TOPDIR}/../sources/imx8m-plus-evk/download"
 
-    SSTATE_DIR = "${TOPDIR}/../sources/imx8m-plus-evk/sstate"'
 bblayers_conf_header:
   standard: 'POKY_BBLAYERS_CONF_VERSION = "2"
 

@@ -50,13 +50,13 @@ repos:
     path: sources/imx7d-sabre/meta-freescale-distro
 local_conf_header:
   standard: 'CONF_VERSION = "2"
+    DL_DIR = "/workspace/downloads"
 
     MACHINE = "imx7dsabresd"'
   custom-local-conf: 'ACCEPT_FSL_EULA = "1"
 
     DL_DIR = "/work/downloads"
 
-    SSTATE_DIR = "/work/sstate-cache"'
 bblayers_conf_header:
   standard: 'POKY_BBLAYERS_CONF_VERSION = "2"
 

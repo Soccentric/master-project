@@ -147,6 +147,7 @@ local_conf_header:
     SDKMACHINE = "x86_64"
     USER_CLASSES = "buildstats"
     PATCHRESOLVE = "noop"
+    DL_DIR = "/workspace/downloads"
   
   diskmon: |
     BB_DISKMON_DIRS ??= "\

@@ -57,6 +57,7 @@ bblayers_conf_header:
 local_conf_header:
   standard: |
     CONF_VERSION = "2"
+    DL_DIR = "/workspace/downloads"
     PACKAGE_CLASSES = "package_rpm"
     SDKMACHINE = "x86_64"
     
