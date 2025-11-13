@@ -1,16 +1,31 @@
 # ==============================================================================
 # Professional Makefile for KAS-based Board Building System
+# Version: 2.0.0
 # ==============================================================================
 
 # Variables
 SHELL := /bin/bash
-GIT_ROOT := $(shell git rev-parse --show-toplevel)
+.ONESHELL:  # Use one shell for multi-line commands
+GIT_ROOT := $(shell git rev-parse --show-toplevel 2>/dev/null || pwd)
 BUILD_DIR := build
 BOARDS_DIR := boards
 SOURCES_DIR := sources
 ARTIFACTS_DIR := artifacts
 DOCKER_IMAGE := master-builder:latest
 WORKSPACE_MOUNT := /workspace
+VERSION := 2.0.0
+TIMESTAMP := $(shell date +%Y%m%d_%H%M%S)
+
+# Prerequisites check
+REQUIRED_TOOLS := docker git
+define CHECK_TOOLS
+	@for tool in $(REQUIRED_TOOLS); do \
+		if ! command -v $$tool >/dev/null 2>&1; then \
+			echo -e "$(COLOR_YELLOW)Error: $$tool is required but not installed$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
+	done
+endef
 
 # Docker run base command
 DOCKER_RUN := docker run --rm --network host \
@@ -32,19 +47,29 @@ COLOR_BOLD := \033[1m
 COLOR_GREEN := \033[32m
 COLOR_YELLOW := \033[33m
 COLOR_BLUE := \033[34m
+COLOR_RED := \033[31m
 
 # ==============================================================================
 # Default target
 # ==============================================================================
 .DEFAULT_GOAL := help
 
+.PHONY: all
 all: help
+
+# ==============================================================================
+# Prerequisites
+# ==============================================================================
+.PHONY: prerequisites
+prerequisites:
+	$(CHECK_TOOLS)
+	@echo -e "$(COLOR_GREEN)✓ All prerequisites satisfied$(COLOR_RESET)"
 
 # ==============================================================================
 # Build targets
 # ==============================================================================
 .PHONY: build
-build: docker-build
+build: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -60,21 +85,28 @@ build: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting build for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Creating build directory structure: $$board_build_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_sources_dir"; \
 	echo -e "$(COLOR_GREEN)Starting KAS build...$(COLOR_RESET)"; \
-	$(DOCKER_RUN) \
+	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas build $(WORKSPACE_MOUNT)/$$yml_file; \
-	if [ $$? -eq 0 ]; then \
+		kas build $(WORKSPACE_MOUNT)/$$yml_file; then \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ Build completed successfully for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "Build artifacts located in: $$board_build_dir"; \
 		echo -e "Sources located in: $$board_sources_dir"; \
 	else \
-		echo -e "$(COLOR_YELLOW)✗ Build failed for $$board$(COLOR_RESET)"; \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
+		echo -e "$(COLOR_RED)✗ Build failed for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Check build logs: $$board_build_dir/tmp/log/"; \
 		echo -e "  • Common issues:"; \
@@ -87,7 +119,7 @@ build: docker-build
 	fi
 
 .PHONY: dry-run
-dry-run: docker-build
+dry-run: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -104,6 +136,8 @@ dry-run: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting dry-run for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Validating configuration for $$board...$(COLOR_RESET)"; \
 	if command -v python3 >/dev/null 2>&1; then \
 		if python3 -c "import yaml; yaml.safe_load(open('$$yml_file'))" 2>/dev/null; then \
@@ -123,25 +157,29 @@ dry-run: docker-build
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	mkdir -p "$$board_sources_dir"; \
 	echo -e "$(COLOR_GREEN)Fetching sources (this may take a while)...$(COLOR_RESET)"; \
-	$(DOCKER_RUN) \
+	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas checkout $(WORKSPACE_MOUNT)/$$yml_file; \
-	if [ $$? -eq 0 ]; then \
+		kas checkout $(WORKSPACE_MOUNT)/$$yml_file; then \
 		echo ""; \
 		echo -e "$(COLOR_GREEN)Parsing recipes (dry-run mode)...$(COLOR_RESET)"; \
-		$(DOCKER_RUN) \
+		if $(DOCKER_RUN) \
 			-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 			$(DOCKER_IMAGE) \
-			kas shell $(WORKSPACE_MOUNT)/$$yml_file -c 'bitbake -n -p'; \
-		if [ $$? -eq 0 ]; then \
+			kas shell $(WORKSPACE_MOUNT)/$$yml_file -c 'bitbake -n -p'; then \
+			end_time=$$(date +%s); \
+			duration=$$((end_time - start_time)); \
 			echo ""; \
 			echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ Dry-run completed successfully for $$board$(COLOR_RESET)"; \
+			echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 			echo -e "$(COLOR_GREEN)Sources fetched to: $$board_sources_dir$(COLOR_RESET)"; \
 			echo -e "$(COLOR_GREEN)Build directory: $$board_build_dir$(COLOR_RESET)"; \
 			echo -e "$(COLOR_GREEN)Configuration validated and ready to build$(COLOR_RESET)"; \
 		else \
+			end_time=$$(date +%s); \
+			duration=$$((end_time - start_time)); \
 			echo -e "$(COLOR_YELLOW)✗ Recipe parsing failed for $$board$(COLOR_RESET)"; \
+			echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 			echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 			echo -e "  • BitBake parsing error - check recipe syntax"; \
 			echo -e "  • Check logs: $$board_build_dir/tmp/log/"; \
@@ -150,7 +188,10 @@ dry-run: docker-build
 			exit 1; \
 		fi; \
 	else \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_YELLOW)✗ Source checkout failed for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Network issues or invalid repository URLs"; \
 		echo -e "  • Check repository access and branch names in $$yml_file"; \
@@ -161,7 +202,8 @@ dry-run: docker-build
 
 .PHONY: dry-run-all
 dry-run-all:
-	@echo -e "$(COLOR_BOLD)$(COLOR_BLUE)Validating all board configurations (YAML syntax check)...$(COLOR_RESET)"; \
+	@start_time=$$(date +%s); \
+	echo -e "$(COLOR_BOLD)$(COLOR_BLUE)Validating all board configurations (YAML syntax check)...$(COLOR_RESET)"; \
 	echo ""; \
 	failed_boards=""; \
 	passed_boards=""; \
@@ -199,6 +241,8 @@ dry-run-all:
 			fi; \
 		fi; \
 	done; \
+	end_time=$$(date +%s); \
+	duration=$$((end_time - start_time)); \
 	passed_count=$$(echo $$passed_boards | wc -w); \
 	failed_count=$$(echo $$failed_boards | wc -w); \
 	echo ""; \
@@ -208,6 +252,7 @@ dry-run-all:
 	echo -e "Total boards: $$total"; \
 	echo -e "$(COLOR_GREEN)Valid:  $$passed_count$(COLOR_RESET)"; \
 	echo -e "$(COLOR_YELLOW)Failed: $$failed_count$(COLOR_RESET)"; \
+	echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 	echo ""; \
 	echo -e "$(COLOR_BOLD)Boards by vendor:$(COLOR_RESET)"; \
 	echo -e "$$vendor_counts" | grep -v "^$$" | sort | uniq -c | awk '{printf "  • %-25s %d boards\n", $$2, $$1}'; \
@@ -229,7 +274,7 @@ dry-run-all:
 	echo -e "$(COLOR_BLUE)  make dry-run <board-name>$(COLOR_RESET)"
 
 .PHONY: sdk
-sdk: docker-build
+sdk: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -245,20 +290,27 @@ sdk: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting SDK build for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Creating build directory structure: $$board_build_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_sources_dir"; \
 	echo -e "$(COLOR_GREEN)Starting SDK build...$(COLOR_RESET)"; \
-	$(DOCKER_RUN) \
+	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas build --target populate_sdk $(WORKSPACE_MOUNT)/$$yml_file; \
-	if [ $$? -eq 0 ]; then \
+		kas build --target populate_sdk $(WORKSPACE_MOUNT)/$$yml_file; then \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ SDK build completed successfully for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "SDK artifacts located in: $$board_build_dir"; \
 	else \
-		echo -e "$(COLOR_YELLOW)✗ SDK build failed for $$board$(COLOR_RESET)"; \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
+		echo -e "$(COLOR_RED)✗ SDK build failed for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Check build logs: $$board_build_dir/tmp/log/"; \
 		echo -e "  • SDK generation may require full image build first"; \
@@ -268,7 +320,7 @@ sdk: docker-build
 	fi
 
 .PHONY: esdk
-esdk: docker-build
+esdk: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -284,20 +336,27 @@ esdk: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting eSDK build for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Creating build directory structure: $$board_build_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_sources_dir"; \
 	echo -e "$(COLOR_GREEN)Starting eSDK build...$(COLOR_RESET)"; \
-	$(DOCKER_RUN) \
+	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas build --target populate_sdk_ext $(WORKSPACE_MOUNT)/$$yml_file; \
-	if [ $$? -eq 0 ]; then \
+		kas build --target populate_sdk_ext $(WORKSPACE_MOUNT)/$$yml_file; then \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ eSDK build completed successfully for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "eSDK artifacts located in: $$board_build_dir"; \
 	else \
-		echo -e "$(COLOR_YELLOW)✗ eSDK build failed for $$board$(COLOR_RESET)"; \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
+		echo -e "$(COLOR_RED)✗ eSDK build failed for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Check build logs: $$board_build_dir/tmp/log/"; \
 		echo -e "  • eSDK requires full image build first"; \
@@ -307,7 +366,7 @@ esdk: docker-build
 	fi
 
 .PHONY: fetch
-fetch: docker-build
+fetch: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -323,20 +382,27 @@ fetch: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Fetching sources for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Creating build directory structure: $$board_build_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_sources_dir"; \
 	echo -e "$(COLOR_GREEN)Fetching sources for $$board...$(COLOR_RESET)"; \
-	$(DOCKER_RUN) \
+	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas checkout $(WORKSPACE_MOUNT)/$$yml_file; \
-	if [ $$? -eq 0 ]; then \
+		kas checkout $(WORKSPACE_MOUNT)/$$yml_file; then \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ Sources fetched successfully for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "Sources located in: $$board_sources_dir"; \
 	else \
-		echo -e "$(COLOR_YELLOW)✗ Fetch failed for $$board$(COLOR_RESET)"; \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
+		echo -e "$(COLOR_RED)✗ Fetch failed for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Network connectivity issues"; \
 		echo -e "  • Invalid repository URLs or branches in $$yml_file"; \
@@ -347,7 +413,7 @@ fetch: docker-build
 	fi
 
 .PHONY: shell
-shell: docker-build
+shell: prerequisites docker-build
 	@board=$(filter-out $@,$(MAKECMDGOALS)); \
 	if [ -z "$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Error: No board specified$(COLOR_RESET)"; \
@@ -363,6 +429,7 @@ shell: docker-build
 	fi; \
 	board_build_dir="$(BUILD_DIR)/$$board"; \
 	board_sources_dir="$(SOURCES_DIR)/$$board"; \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting KAS shell for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Creating build directory structure: $$board_build_dir$(COLOR_RESET)"; \
 	mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 	echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
@@ -397,6 +464,8 @@ copy-artifacts:
 		echo "Run 'make build $$board' first"; \
 		exit 1; \
 	fi; \
+	start_time=$$(date +%s); \
+	echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Copying artifacts for $$board$(COLOR_RESET)"; \
 	echo -e "$(COLOR_GREEN)Copying artifacts for $$board to $(ARTIFACTS_DIR)/$$board$(COLOR_RESET)"; \
 	mkdir -p "$(ARTIFACTS_DIR)/$$board"/{image,sdk,esdk}; \
 	artifacts_found=false; \
@@ -415,17 +484,53 @@ copy-artifacts:
 		cp "$(BUILD_DIR)/$$board/tmp/deploy/sdk"/*-toolchain-ext-*.sh "$(ARTIFACTS_DIR)/$$board/esdk/" 2>/dev/null || true; \
 		artifacts_found=true; \
 	fi; \
+	end_time=$$(date +%s); \
+	duration=$$((end_time - start_time)); \
 	if [ "$$artifacts_found" = true ]; then \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ Artifacts copied to $(ARTIFACTS_DIR)/$$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "  Images: $(ARTIFACTS_DIR)/$$board/image/"; \
 		echo -e "  SDK:    $(ARTIFACTS_DIR)/$$board/sdk/"; \
 		echo -e "  eSDK:   $(ARTIFACTS_DIR)/$$board/esdk/"; \
 	else \
 		echo -e "$(COLOR_YELLOW)✗ No artifacts found for $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 		echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 		echo -e "  • Build may not have completed successfully"; \
 		echo -e "  • Check if build directory exists: $(BUILD_DIR)/$$board"; \
 		echo -e "  • Run 'make build $$board' first"; \
+		exit 1; \
+	fi
+
+.PHONY: lint-yaml
+lint-yaml:
+	@start_time=$$(date +%s); \
+	echo -e "$(COLOR_BOLD)$(COLOR_BLUE)Linting YAML configuration files...$(COLOR_RESET)"; \
+	echo ""; \
+	failed_files=""; \
+	total=0; \
+	for yml_file in $$(find $(BOARDS_DIR) -name "*.yml" | sort); do \
+		total=$$((total + 1)); \
+		if command -v python3 >/dev/null 2>&1; then \
+			if python3 -c "import yaml; yaml.safe_load(open('$$yml_file'))" 2>/dev/null; then \
+				echo -e "$(COLOR_GREEN)✓ $$yml_file$(COLOR_RESET)"; \
+			else \
+				yaml_error=$$(python3 -c "import yaml; yaml.safe_load(open('$$yml_file'))" 2>&1); \
+				echo -e "$(COLOR_RED)✗ $$yml_file$(COLOR_RESET)"; \
+				echo -e "  $(COLOR_YELLOW)Error: $$yaml_error$(COLOR_RESET)"; \
+				failed_files="$$failed_files $$yml_file"; \
+			fi; \
+		else \
+			echo -e "$(COLOR_YELLOW)? $$yml_file$(COLOR_RESET) (python3 not available)"; \
+		fi; \
+	done; \
+	end_time=$$(date +%s); \
+	duration=$$((end_time - start_time)); \
+	echo ""; \
+	failed_count=$$(echo $$failed_files | wc -w); \
+	echo -e "$(COLOR_BOLD)Summary:$(COLOR_RESET) $$total files checked, $$failed_count failed"; \
+	echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
+	if [ $$failed_count -gt 0 ]; then \
 		exit 1; \
 	fi
 
@@ -447,10 +552,12 @@ list:
 .PHONY: info
 info:
 	@echo -e "$(COLOR_BOLD)Build System Information:$(COLOR_RESET)"
+	@echo -e "  Version:         $(VERSION)"
 	@echo -e "  Git Root:        $(GIT_ROOT)"
 	@echo -e "  Build Directory: $(BUILD_DIR)"
 	@echo -e "  Boards Directory: $(BOARDS_DIR)"
 	@echo -e "  Sources Directory: $(SOURCES_DIR)"
+	@echo -e "  Artifacts Directory: $(ARTIFACTS_DIR)"
 	@echo -e "  Docker Image:    $(DOCKER_IMAGE)"
 	@echo -e "  Workspace Mount: $(WORKSPACE_MOUNT)"
 	@echo -e ""
@@ -468,9 +575,14 @@ info:
 		echo "  No sources found"; \
 	fi
 
+.PHONY: version
+version:
+	@echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System v$(VERSION)$(COLOR_RESET)"
+	@echo -e "Built on: $(TIMESTAMP)"
+
 .PHONY: help
 help:
-	@echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System$(COLOR_RESET)"
+	@echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System v$(VERSION)$(COLOR_RESET)"
 	@echo ""
 	@echo -e "$(COLOR_BOLD)Usage:$(COLOR_RESET)"
 	@echo -e "  make build <board-name>        Build a specific board configuration"
@@ -483,10 +595,13 @@ help:
 	@echo -e "  make shell <board-name>        Open interactive shell in build environment"
 	@echo -e "  make list                      List all available boards"
 	@echo -e "  make info                      Show build system information"
+	@echo -e "  make version                   Show version information"
+	@echo -e "  make lint-yaml                 Lint all YAML configuration files"
 	@echo -e "  make clean <board-name>        Clean build artifacts for a board"
 	@echo -e "  make clean-all                 Clean all build artifacts"
 	@echo -e "  make docker-build              Build the Docker image"
 	@echo -e "  make docker-run                Run Docker container interactively"
+	@echo -e "  make prerequisites             Check system prerequisites"
 	@echo -e "  make help                      Show this help message"
 	@echo ""
 	@echo -e "$(COLOR_BOLD)Tab Completion:$(COLOR_RESET)"
@@ -534,11 +649,15 @@ clean:
 		echo "Or use: make clean-all (removes everything)"; \
 		exit 1; \
 	fi; \
+	start_time=$$(date +%s); \
 	if [ -d "$(BUILD_DIR)/$$board" ] || [ -d "$(SOURCES_DIR)/$$board" ]; then \
 		echo -e "$(COLOR_YELLOW)Removing build artifacts and sources for $$board...$(COLOR_RESET)"; \
 		rm -rf "$(BUILD_DIR)/$$board"; \
 		rm -rf "$(SOURCES_DIR)/$$board"; \
+		end_time=$$(date +%s); \
+		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_GREEN)✓ Cleaned $$board$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 	else \
 		echo -e "$(COLOR_YELLOW)No build artifacts or sources found for $$board$(COLOR_RESET)"; \
 	fi
@@ -551,11 +670,18 @@ docker-build:
 	@if docker images -q $(DOCKER_IMAGE) | grep -q .; then \
 		echo -e "$(COLOR_GREEN)✓ Docker image $(DOCKER_IMAGE) already exists, skipping build$(COLOR_RESET)"; \
 	else \
+		start_time=$$(date +%s); \
 		echo -e "$(COLOR_BLUE)Building Docker image...$(COLOR_RESET)"; \
 		if $(MAKE) -C docker build; then \
+			end_time=$$(date +%s); \
+			duration=$$((end_time - start_time)); \
 			echo -e "$(COLOR_GREEN)✓ Docker image built successfully$(COLOR_RESET)"; \
+			echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 		else \
+			end_time=$$(date +%s); \
+			duration=$$((end_time - start_time)); \
 			echo -e "$(COLOR_YELLOW)✗ Docker build failed$(COLOR_RESET)"; \
+			echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 			echo -e "$(COLOR_YELLOW)Error details:$(COLOR_RESET)"; \
 			echo -e "  • Check Docker daemon is running"; \
 			echo -e "  • Verify Dockerfile in docker/ directory"; \
