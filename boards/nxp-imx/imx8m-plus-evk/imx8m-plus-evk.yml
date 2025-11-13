@@ -1,0 +1,68 @@
+header:
+  version: 11
+machine: imx8mpevk
+distro: fslc-wayland
+target: core-image-minimal
+build_system: oe
+repos:
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/openembedded-core
+    layers:
+      meta: null
+  bitbake:
+    url: https://github.com/openembedded/bitbake.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/bitbake
+    layers:
+      bitbake: excluded
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/meta-openembedded
+    layers:
+      meta-oe: null
+      meta-filesystems: null
+      meta-gnome: null
+      meta-xfce: null
+      meta-initramfs: null
+      meta-networking: null
+      meta-multimedia: null
+      meta-python: null
+  meta-yocto:
+    url: https://git.yoctoproject.org/git/meta-yocto.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/meta-yocto
+    layers:
+      meta-poky: null
+  meta-freescale:
+    url: https://github.com/Freescale/meta-freescale.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/meta-freescale
+  meta-freescale-3rdparty:
+    url: https://github.com/Freescale/meta-freescale-3rdparty.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/meta-freescale-3rdparty
+  meta-freescale-distro:
+    url: https://github.com/Freescale/meta-freescale-distro.git
+    refspec: kirkstone
+    path: sources/imx8m-plus-evk/meta-freescale-distro
+local_conf_header:
+  standard: 'CONF_VERSION = "2"
+
+    MACHINE = "imx8mpevk"'
+  custom-local-conf: 'ACCEPT_FSL_EULA = "1"
+
+    DL_DIR = "${TOPDIR}/../sources/imx8m-plus-evk/download"
+
+    SSTATE_DIR = "${TOPDIR}/../sources/imx8m-plus-evk/sstate"'
+bblayers_conf_header:
+  standard: 'POKY_BBLAYERS_CONF_VERSION = "2"
+
+    BBPATH = "${TOPDIR}"
+
+    BBFILES ?= ""'
+  custom-bblayers-conf: 'POKY_BBLAYERS_CONF_VERSION = "1"
+
+    '

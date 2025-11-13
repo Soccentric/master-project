@@ -1,0 +1,42 @@
+# Build artifacts
+build/
+sources/
+*.swp
+*.swo
+*~
+
+# Docker socket files
+*.sock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+
+# Build directories
+build/
+sources/
+
+# Artifacts are typically kept
+# Uncomment if you want to exclude them
+# artifacts/
+
+# Temporary files
+tmp/
+temp/
+
+sources/
