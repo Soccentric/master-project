@@ -1,68 +1,166 @@
 header:
-  version: 11
-machine: imx8qxpc0mek
-distro: fslc-wayland
-target: core-image-minimal
-build_system: oe
+  version: 14
+
+machine: imx95-19x19-lpddr5-evk
+distro: fslc-xwayland
+target: core-image-full-cmdline
+
 repos:
-  openembedded-core:
-    url: https://github.com/openembedded/openembedded-core.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/openembedded-core
+  poky:
+    url: https://github.com/yoctoproject/poky
+    path: sources/imx95-evk/poky
+    commit: 200d12b6a58ad961d60a7774ca0f7a9d29498724
     layers:
-      meta: null
-  bitbake:
-    url: https://github.com/openembedded/bitbake.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/bitbake
-    layers:
-      bitbake: excluded
+      meta:
+      meta-poky:
+
   meta-openembedded:
-    url: https://github.com/openembedded/meta-openembedded.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/meta-openembedded
+    url: https://github.com/openembedded/meta-openembedded
+    path: sources/imx95-evk/meta-openembedded
+    commit: 72018ca1b1a471226917e8246e8bbf9a374ccf97
     layers:
-      meta-oe: null
-      meta-filesystems: null
-      meta-gnome: null
-      meta-xfce: null
-      meta-initramfs: null
-      meta-networking: null
-      meta-multimedia: null
-      meta-python: null
-  meta-yocto:
-    url: https://git.yoctoproject.org/git/meta-yocto.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/meta-yocto
-    layers:
-      meta-poky: null
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-multimedia:
+      meta-gnome:
+      meta-filesystems:
+
+  meta-clang:
+    url: https://github.com/kraj/meta-clang
+    path: sources/imx95-evk/meta-clang
+    commit: 2b7433611d80f6d0ee1b04156fa91fc73d3c2665
+
   meta-freescale:
-    url: https://github.com/Freescale/meta-freescale.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/meta-freescale
+    url: https://github.com/Freescale/meta-freescale
+    path: sources/imx95-evk/meta-freescale    
+    commit: 0627128b341cfb2bef7a0832ce8cac0ce1127f13
+
   meta-freescale-3rdparty:
-    url: https://github.com/Freescale/meta-freescale-3rdparty.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/meta-freescale-3rdparty
+    url: https://github.com/Freescale/meta-freescale-3rdparty
+    path: sources/imx95-evk/meta-freescale-3rdparty
+    commit: 6c063450d464eb2f380443c7d9af1b94ce9b9d75
+
   meta-freescale-distro:
-    url: https://github.com/Freescale/meta-freescale-distro.git
-    refspec: kirkstone
-    path: sources/imx8quadxplus-mek/meta-freescale-distro
-local_conf_header:
-  standard: 'CONF_VERSION = "2"
-    DL_DIR = "/workspace/downloads"
+    url: https://github.com/Freescale/meta-freescale-distro
+    path: sources/imx95-evk/meta-freescale-distro
+    commit: b9d6a5d9931922558046d230c1f5f4ef6ee72345
 
-    MACHINE = "imx8qxpc0mek"'
-  custom-local-conf: 'ACCEPT_FSL_EULA = "1"
+  meta-arm:
+    url: https://git.yoctoproject.org/meta-arm
+    path: sources/imx95-evk/meta-arm
+    commit: 950a4afce46a359def2958bd9ae33fc08ff9bb0d
+    layers:
+      meta-arm:
+      meta-arm-toolchain:
 
-    DL_DIR = "/work/downloads"
+
+
+  meta-browser:
+    url: https://github.com/OSSystems/meta-browser
+    path: sources/imx95-evk/meta-browser  
+    commit: dc31889c0899971def535dc1c040edf18bc16691
+    layers:
+      meta-chromium:
+
+  meta-security:
+    url: https://git.yoctoproject.org/meta-security
+    path: sources/imx95-evk/meta-security
+    commit: 459d837338ca230254baa2994f870bf6eb9d0139
+
+  meta-timesys:
+    url: https://github.com/TimesysGit/meta-timesys
+    path: sources/imx95-evk/meta-timesys
+    commit: 4dc3f4bdfde4a86904b6e1a3d58df4696e7a63fa
+
+  meta-virtualization:
+    url: https://git.yoctoproject.org/meta-virtualization
+    path: sources/imx95-evk/meta-virtualization
+    commit: 6f3c1d8f90947408a6587be222fec575a1ca5195
+
+  meta-imx:
+    url: https://github.com/nxp-imx/meta-imx
+    path: sources/imx95-evk/meta-imx
+    commit: 219f6d04a4c339eb6f2dc626f944bbdf9a716ff5
+    layers:
+      meta-imx-bsp:
+
+  meta-nxp-connectivity:
+    url: https://github.com/nxp-imx/meta-nxp-connectivity
+    path: sources/imx95-evk/meta-nxp-connectivity
+    commit: f58365ec75a5768ff3e8e8bcd64f237738c93160
+    layers:
+      meta-nxp-connectivity-examples:
+      meta-nxp-matter-advanced:
+      meta-nxp-matter-baseline:
+      meta-nxp-openthread:
+      meta-nxp-otbr:
+      meta-nxp-zigbee-rcp:
+
+  meta-swupdate:
+    url: https://github.com/sbabic/meta-swupdate
+    path: sources/imx95-evk/meta-swupdate
+    commit: d598d4e675b541301ea1dfc8f0c8931983b4dcd0
+
+  meta-mender:
+    url: https://github.com/mendersoftware/meta-mender
+    path: sources/imx95-evk/meta-mender
+    commit: 0d393c2267a92091f975eb932338c07109f5f5fd
+    layers:
+      meta-mender-core:
+
+  meta-variscite-bsp-common:
+    url: https://github.com/varigit/meta-variscite-bsp-common
+    path: sources/imx95-evk/meta-variscite-bsp-common
+    commit: 15dc7d94e42b15b9e71974ddb6ec0bca67ce69c4
+
+  meta-variscite-bsp-imx:
+    url: https://github.com/varigit/meta-variscite-bsp-imx
+    path: sources/imx95-evk/meta-variscite-bsp-imx
+    commit: 28c0a29cfc774f8f7990d4ddc182e640e2e1b8fd
+
+  meta-variscite-hab:
+    url: https://github.com/varigit/meta-variscite-hab
+    path: sources/imx95-evk/meta-variscite-hab
+    commit: 949557e79104bfc99f15d9787a9ca853bf939128
+
+  meta-variscite-sdk-common:
+    url: https://github.com/varigit/meta-variscite-sdk-common
+    path: sources/imx95-evk/meta-variscite-sdk-common
+    commit: c099acece182a3e275745ea22797eb375b307798
+
+  meta-variscite-sdk-imx:
+    url: https://github.com/varigit/meta-variscite-sdk-imx
+    path: sources/imx95-evk/meta-variscite-sdk-imx
+    commit: 45a234c9d9d31593795a9232b54340286b6179b9
 
 bblayers_conf_header:
-  standard: 'POKY_BBLAYERS_CONF_VERSION = "2"
-
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
     BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
 
-    BBFILES ?= ""'
-  custom-bblayers-conf: 'POKY_BBLAYERS_CONF_VERSION = "1"
+local_conf_header:
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+    DL_DIR = "/workspace/downloads"
+  
+  diskmon: |
+    BB_DISKMON_DIRS ??= "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"
+  
+  parallel: |
+    BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+    PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
 
-    '
