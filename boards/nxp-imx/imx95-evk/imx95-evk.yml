@@ -54,12 +54,7 @@ repos:
       meta-arm:
       meta-arm-toolchain:
 
-  meta-qt6:
-    url: https://github.com/YoeDistro/meta-qt6
-    path: sources/imx95-evk/meta-qt6
-    commit: 586a6cb5aec755803a3be3cec359baafe89d6432
-    layers:
-       meta-qt6 : 
+
 
   meta-browser:
     url: https://github.com/OSSystems/meta-browser
