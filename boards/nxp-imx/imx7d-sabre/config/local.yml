@@ -1,0 +1,23 @@
+local_conf_header:
+  standard: 'CONF_VERSION = "2"
+
+    PACKAGE_CLASSES = "package_rpm"
+
+    SDKMACHINE = "x86_64"
+
+    USER_CLASSES = "buildstats"
+
+    PATCHRESOLVE = "noop"
+
+    DL_DIR = "/workspace/downloads"
+
+    '
+  diskmon: "BB_DISKMON_DIRS ??= \"\\\n    STOPTASKS,${TMPDIR},1G,100K \\\n    STOPTASKS,${DL_DIR},1G,100K\
+    \ \\\n    STOPTASKS,${SSTATE_DIR},1G,100K \\\n    STOPTASKS,/tmp,100M,100K \\\n\
+    \    HALT,${TMPDIR},100M,1K \\\n    HALT,${DL_DIR},100M,1K \\\n    HALT,${SSTATE_DIR},100M,1K\
+    \ \\\n    HALT,/tmp,10M,1K\"\n"
+  parallel: 'BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+
+    PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+
+    '

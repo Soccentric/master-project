@@ -1,0 +1,5 @@
+header:
+  version: 14
+machine: imx6qsabresd
+distro: fsl-imx-xwayland
+target: core-image-full-cmdline

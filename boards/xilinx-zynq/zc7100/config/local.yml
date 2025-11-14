@@ -1,0 +1,8 @@
+local_conf_header:
+  standard: 'CONF_VERSION = "2"
+
+    DL_DIR = "/workspace/downloads"
+
+    MACHINE = "k26-smk-kr"
+
+    '

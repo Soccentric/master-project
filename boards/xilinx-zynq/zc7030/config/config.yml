@@ -1,0 +1,6 @@
+header:
+  version: 14
+machine: zc7030-zynq7
+distro: petalinux
+target:
+- petalinux-image-minimal

@@ -1,0 +1,6 @@
+header:
+  version: 14
+machine: ultrazed-zynqmp
+distro: petalinux
+target:
+- petalinux-image-minimal

@@ -1,0 +1,29 @@
+constants:
+  BRANCH: &branch scarthgap
+
+repos:
+  meta-raspberrypi:
+    url: https://github.com/agherzan/meta-raspberrypi.git
+    branch: '*branch'
+    path: sources/meta-raspberrypi
+  poky:
+    url: https://git.yoctoproject.org/git/poky
+    path: sources/poky
+    branch: '*branch'
+    layers:
+      meta: null
+      meta-poky: null
+      meta-yocto-bsp: null
+  meta-openembedded:
+    url: http://git.openembedded.org/meta-openembedded
+    path: sources/meta-openembedded
+    branch: '*branch'
+    layers:
+      meta-oe: null
+      meta-python: null
+      meta-networking: null
+      meta-perl: null
+  meta-qt5:
+    url: https://github.com/meta-qt5/meta-qt5/
+    path: sources/meta-qt5
+    branch: '*branch'

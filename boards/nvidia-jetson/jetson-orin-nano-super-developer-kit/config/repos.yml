@@ -1,0 +1,43 @@
+constants:
+  BRANCH: &branch kirkstone
+
+repos:
+  poky:
+    url: https://git.yoctoproject.org/poky
+    branch: *branch
+    path: sources/poky
+    layers:
+      meta:
+      meta-poky:
+
+  meta-openembedded:
+    url: https://git.openembedded.org/meta-openembedded
+    branch: *branch
+    path: sources/meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-multimedia:
+      meta-filesystems:
+
+  meta-tegra:
+    url: https://github.com/OE4T/meta-tegra
+    branch: *branch
+    path: sources/meta-tegra
+    layers:
+      .:
+
+  meta-tegra-community:
+    url: https://github.com/OE4T/meta-tegra-community
+    branch: *branch
+    path: sources/meta-tegra-community
+    layers:
+      .:
+
+  meta-virtualization:
+    url: https://git.yoctoproject.org/meta-virtualization
+    branch: *branch
+    path: sources/meta-virtualization
+    layers:
+      .:

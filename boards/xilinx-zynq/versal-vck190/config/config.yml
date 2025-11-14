@@ -1,0 +1,6 @@
+header:
+  version: 14
+machine: vck190-versal
+distro: petalinux
+target:
+- petalinux-image-minimal

@@ -1,0 +1,6 @@
+header:
+  version: 14
+machine: zcu102-zynqmp
+distro: petalinux
+target:
+- petalinux-image-minimal

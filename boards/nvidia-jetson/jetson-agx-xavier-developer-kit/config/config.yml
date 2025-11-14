@@ -1,0 +1,8 @@
+header:
+  version: 14
+
+machine: jetson-agx-xavier-devkit
+
+distro: poky
+
+target: core-image-base

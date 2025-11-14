@@ -1,0 +1,26 @@
+local_conf_header:
+  reduce_diskspace: 'INHERIT += "rm_work_and_downloads"
+
+    '
+  standard: 'CONF_VERSION = "2"
+
+    PACKAGE_CLASSES = "package_rpm"
+
+    SDKMACHINE = "x86_64"
+
+    USER_CLASSES = "buildstats"
+
+    PATCHRESOLVE = "noop"
+
+    DL_DIR = "/workspace/downloads"
+
+    '
+  debug-tweaks: 'IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login
+    post-install-logging"
+
+    '
+  diskmon: "BB_DISKMON_DIRS = \"\\\n    STOPTASKS,${TMPDIR},1G,100K \\\n    STOPTASKS,${DL_DIR},1G,100K\
+    \ \\\n    STOPTASKS,${SSTATE_DIR},1G,100K \\\n    STOPTASKS,/tmp,100M,100K \\\n\
+    \    HALT,${TMPDIR},100M,1K \\\n    HALT,${DL_DIR},100M,1K \\\n    HALT,${SSTATE_DIR},100M,1K\
+    \ \\\n    HALT,/tmp,10M,1K\"\n"
+  license: LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"

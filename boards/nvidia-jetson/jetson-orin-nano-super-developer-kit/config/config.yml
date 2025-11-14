@@ -1,0 +1,8 @@
+header:
+  version: 14
+
+machine: jetson-orin-nano-super-devkit
+
+distro: poky
+
+target: core-image-base

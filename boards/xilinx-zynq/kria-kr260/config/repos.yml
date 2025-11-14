@@ -1,0 +1,120 @@
+constants:
+  BRANCH: &branch rel-v2025.1
+
+repos:
+  meta-xilinx:
+    url: https://github.com/Xilinx/meta-xilinx
+    branch: '*branch'
+    path: sources/kria-kr260/meta-xilinx
+    layers:
+      meta-xilinx-bsp: null
+      meta-xilinx-core: null
+      meta-xilinx-standalone: null
+      meta-xilinx-vendor: null
+      meta-microblaze: null
+      meta-xilinx-multimedia: null
+      meta-xilinx-standalone-sdt: null
+  meta-xilinx-tools:
+    url: https://github.com/Xilinx/meta-xilinx-tools
+    branch: '*branch'
+    path: sources/kria-kr260/meta-xilinx-tools
+  meta-arm:
+    url: https://github.com/Xilinx/meta-arm
+    branch: '*branch'
+    path: sources/kria-kr260/meta-arm
+    layers:
+      meta-arm: null
+      meta-arm-bsp: null
+      meta-arm-systemready: null
+      meta-arm-toolchain: null
+  meta-petalinux:
+    url: https://github.com/Xilinx/meta-petalinux
+    branch: '*branch'
+    path: sources/kria-kr260/meta-petalinux
+  meta-xilinx-tsn:
+    url: https://github.com/Xilinx/meta-xilinx-tsn
+    branch: '*branch'
+    path: sources/kria-kr260/meta-xilinx-tsn
+  meta-kria:
+    url: https://github.com/Xilinx/meta-kria
+    branch: '*branch'
+    path: sources/kria-kr260/meta-kria
+  meta-avnet:
+    url: https://github.com/sandeshghimire/meta-avnet.git
+    branch: '*branch'
+    path: sources/kria-kr260/meta-avnet
+  meta-embedded-plus:
+    url: https://github.com/Xilinx/meta-embedded-plus
+    branch: '*branch'
+    path: sources/kria-kr260/meta-embedded-plus
+  poky:
+    url: https://github.com/Xilinx/poky
+    branch: '*branch'
+    path: sources/kria-kr260/poky
+    layers:
+      meta: null
+      meta-poky: null
+  meta-mingw:
+    url: https://github.com/Xilinx/meta-mingw
+    branch: '*branch'
+    path: sources/kria-kr260/meta-mingw
+  meta-virtualization:
+    url: https://github.com/Xilinx/meta-virtualization
+    branch: '*branch'
+    path: sources/kria-kr260/meta-virtualization
+  meta-security:
+    url: https://github.com/Xilinx/meta-security
+    branch: '*branch'
+    path: sources/kria-kr260/meta-security
+  meta-openembedded:
+    url: https://github.com/Xilinx/meta-openembedded
+    branch: '*branch'
+    path: sources/kria-kr260/meta-openembedded
+    layers:
+      meta-oe: null
+      meta-python: null
+      meta-networking: null
+      meta-filesystems: null
+      meta-gnome: null
+      meta-multimedia: null
+      meta-webserver: null
+  meta-openamp:
+    url: https://github.com/Xilinx/meta-openamp
+    branch: '*branch'
+    path: sources/kria-kr260/meta-openamp
+  meta-qt5:
+    url: https://github.com/Xilinx/meta-qt5
+    branch: '*branch'
+    path: sources/kria-kr260/meta-qt5
+  meta-aws:
+    url: https://github.com/Xilinx/meta-aws
+    branch: '*branch'
+    path: sources/kria-kr260/meta-aws
+  meta-ros:
+    url: https://github.com/Xilinx/meta-ros
+    branch: '*branch'
+    path: sources/kria-kr260/meta-ros
+    layers:
+      meta-ros1: null
+      meta-ros1-noetic: null
+      meta-ros2: null
+      meta-ros2-humble: null
+      meta-ros2-iron: null
+      meta-ros2-jazzy: null
+      meta-ros2-rolling: null
+      meta-ros-common: null
+  meta-rauc:
+    url: https://github.com/Xilinx/meta-rauc
+    branch: '*branch'
+    path: sources/kria-kr260/meta-rauc
+  meta-vitis:
+    url: https://github.com/Xilinx/meta-vitis
+    branch: '*branch'
+    path: sources/kria-kr260/meta-vitis
+  meta-amd-adaptive-socs:
+    url: https://github.com/Xilinx/meta-amd-adaptive-socs
+    branch: '*branch'
+    path: sources/kria-kr260/meta-amd-adaptive-socs
+    layers:
+      meta-amd-adaptive-socs-bsp: null
+      meta-amd-adaptive-socs-core: null
