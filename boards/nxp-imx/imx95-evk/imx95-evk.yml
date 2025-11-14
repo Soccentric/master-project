@@ -148,6 +148,8 @@ local_conf_header:
     USER_CLASSES = "buildstats"
     PATCHRESOLVE = "noop"
     DL_DIR = "/workspace/downloads"
+    ACCEPT_FSL_EULA = "1"
+    
   
   diskmon: |
     BB_DISKMON_DIRS ??= "\

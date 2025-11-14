@@ -1,8 +1,9 @@
 header:
   version: 14
 
-machine: imx95-19x19-lpddr5-evk
-distro: fslc-xwayland
+machine: imx8dxlevk
+
+distro: fsl-imx-xwayland
 target: core-image-full-cmdline
 
 repos:

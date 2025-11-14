@@ -1,7 +1,8 @@
 header:
   version: 14
 
-machine: zynqmp-kria-kr260-revB-starterkit
+machine: zc706-zynq7
+
 distro: petalinux
 target:
   - petalinux-image-minimal

@@ -1,7 +1,7 @@
 header:
   version: 14
 
-machine: jetson-xavier-nx-devkit
+machine: jetson-agx-thor-devkit
 
 distro: poky
 
