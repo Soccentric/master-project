@@ -58,8 +58,7 @@ repos:
     url: https://github.com/YoeDistro/meta-qt6
     path: sources/imx95-evk/meta-qt6
     commit: 586a6cb5aec755803a3be3cec359baafe89d6432
-    layers:
-       meta-qt6 : 
+    
 
   meta-browser:
     url: https://github.com/OSSystems/meta-browser
@@ -152,6 +151,12 @@ local_conf_header:
     SDKMACHINE = "x86_64"
     USER_CLASSES = "buildstats"
     PATCHRESOLVE = "noop"
+    DL_DIR = "/workspace/downloads"
+    ACCEPT_FSL_EULA = "1"
+  
+  bbmask: |
+    # Mask Qt6 bbappends since Qt6 layer is not included
+    BBMASK += "meta-variscite-sdk-imx/dynamic-layers/qt6-layer/"
   
   diskmon: |
     BB_DISKMON_DIRS ??= "\

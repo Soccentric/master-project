@@ -300,7 +300,7 @@ sdk: prerequisites docker-build
 	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas build --target populate_sdk $(WORKSPACE_MOUNT)/$$yml_file; then \
+		kas build -c populate_sdk $(WORKSPACE_MOUNT)/$$yml_file; then \
 		end_time=$$(date +%s); \
 		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ SDK build completed successfully for $$board$(COLOR_RESET)"; \
@@ -346,7 +346,7 @@ esdk: prerequisites docker-build
 	if $(DOCKER_RUN) \
 		-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
 		$(DOCKER_IMAGE) \
-		kas build --target populate_sdk_ext $(WORKSPACE_MOUNT)/$$yml_file; then \
+		kas build -c populate_sdk_ext $(WORKSPACE_MOUNT)/$$yml_file; then \
 		end_time=$$(date +%s); \
 		duration=$$((end_time - start_time)); \
 		echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ eSDK build completed successfully for $$board$(COLOR_RESET)"; \
