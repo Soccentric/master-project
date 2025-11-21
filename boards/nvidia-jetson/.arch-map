@@ -1,0 +1,19 @@
+# NVIDIA Jetson Architecture Mapping
+# Format: machine:architecture
+# All Jetson platforms are aarch64 (64-bit ARM)
+
+clara-agx-xavier-devkit:aarch64
+jetson-agx-orin-devkit:aarch64
+jetson-agx-orin-devkit-industrial:aarch64
+jetson-agx-xavier-devkit:aarch64
+jetson-agx-xavier-industrial:aarch64
+jetson-orin-nano-devkit:aarch64
+jetson-orin-nano-devkit-nvme:aarch64
+jetson-xavier-nx-devkit:aarch64
+jetson-xavier-nx-devkit-emmc:aarch64
+p3509-a02-p3767-0000:aarch64
+p3737-0000-p3701-0004:aarch64
+p3737-0000-p3701-0005:aarch64
+p3768-0000-p3767-0000:aarch64
+p3768-0000-p3767-0001:aarch64
+p3768-0000-p3767-0004:aarch64

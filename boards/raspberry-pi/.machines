@@ -1,0 +1,19 @@
+# Supported Raspberry Pi Machines
+# Format: one machine name per line
+# Lines starting with # are comments
+
+raspberrypi
+raspberrypi-armv7
+raspberrypi-armv8
+raspberrypi-cm
+raspberrypi-cm3
+raspberrypi0
+raspberrypi0-2w
+raspberrypi0-2w-64
+raspberrypi0-wifi
+raspberrypi2
+raspberrypi3
+raspberrypi3-64
+raspberrypi4
+raspberrypi4-64
+raspberrypi5

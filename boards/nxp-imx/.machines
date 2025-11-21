@@ -1,0 +1,61 @@
+# Supported NXP i.MX Machines
+# Format: one machine name per line
+# Lines starting with # are comments
+
+# i.MX23/28 Series
+imx23evk
+imx28evk
+
+# i.MX5 Series
+imx51evk
+imx53qsb
+
+# i.MX6 Series
+imx6qdlsabreauto
+imx6qdlsabresd
+imx6slevk
+imx6sllevk
+imx6sxsabreauto
+imx6sxsabresd
+imx6ulevk
+imx6ullevk
+imx6ulz-14x14-evk
+
+# i.MX7 Series
+imx7dsabresd
+imx7ulpevk
+
+# i.MX8 Series
+imx8dx-mek
+imx8dxl-ddr3l-evk
+imx8dxl-lpddr4-evk
+imx8mm-ddr4-evk
+imx8mm-lpddr4-evk
+imx8mn-ddr4-evk
+imx8mn-lpddr4-evk
+imx8mnul-ddr3l-evk
+imx8mp-ddr4-evk
+imx8mp-lpddr4-evk
+imx8mq-evk
+imx8qm-mek
+imx8qxp-mek
+imx8ulp-lpddr4-evk
+
+# i.MX9 Series
+imx93-11x11-lpddr4x-evk
+imx93-9x9-lpddr4-qsb
+
+# Layerscape (LS) Series
+ls1012afrwy
+ls1012ardb
+ls1021atwr
+ls1028ardb
+ls1043ardb
+ls1046afrwy
+ls1046ardb
+ls1088ardb
+ls1088ardb-pb
+ls2080ardb
+ls2088ardb
+lx2160ardb
+lx2162aqds

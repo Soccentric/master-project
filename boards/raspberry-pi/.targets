@@ -1,0 +1,23 @@
+# Supported Target Images for Raspberry Pi
+# Format: one target image per line
+# Lines starting with # are comments
+
+# Standard Yocto images
+core-image-base
+core-image-minimal
+core-image-full-cmdline
+core-image-sato
+core-image-weston
+
+# Raspberry Pi BSP images
+rpi-test-image
+rpi-hwup-image
+
+# meta-soc-rpi specialized images
+rpi-image-base
+rpi-image-ros2
+rpi-image-iot
+rpi-image-grpc
+rpi-image-vision
+rpi-image-dds
+rpi-image-rust

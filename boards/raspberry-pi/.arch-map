@@ -1,0 +1,19 @@
+# Raspberry Pi Architecture Mapping
+# Format: machine:architecture
+# Architecture values: arm (32-bit), aarch64 (64-bit)
+
+raspberrypi:arm
+raspberrypi-armv7:arm
+raspberrypi-armv8:aarch64
+raspberrypi-cm:arm
+raspberrypi-cm3:arm
+raspberrypi0:arm
+raspberrypi0-2w:arm
+raspberrypi0-2w-64:aarch64
+raspberrypi0-wifi:arm
+raspberrypi2:arm
+raspberrypi3:arm
+raspberrypi3-64:aarch64
+raspberrypi4:arm
+raspberrypi4-64:aarch64
+raspberrypi5:aarch64

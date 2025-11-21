@@ -1,0 +1,24 @@
+# Supported Target Images for NXP i.MX
+# Format: one target image per line
+# Lines starting with # are comments
+
+# Standard Yocto images
+core-image-minimal
+core-image-base
+core-image-full-cmdline
+core-image-sato
+core-image-weston
+
+# NXP i.MX BSP images
+fsl-image-multimedia
+fsl-image-multimedia-full
+fsl-image-validation-imx
+
+# meta-soc-imx specialized images
+imx-image-base
+imx-image-dds
+imx-image-grpc
+imx-image-iot
+imx-image-ros2
+imx-image-rust
+imx-image-vision

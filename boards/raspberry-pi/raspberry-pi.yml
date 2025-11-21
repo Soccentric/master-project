@@ -1,0 +1,99 @@
+# ==============================================================================
+# Raspberry Pi Family Configuration
+# This file serves as the master template for all Raspberry Pi boards
+# Machine and target are substituted from command line arguments
+# ==============================================================================
+
+header:
+  version: 8
+
+defaults:
+  repos:
+    branch: soc-rel-v2025.4
+
+machine: __MACHINE__
+distro: poky
+target:
+  - __TARGET__
+
+repos:
+  meta-raspberrypi:
+    url: https://github.com/soc-rpi-oss/meta-raspberrypi
+    path: sources/raspberry-pi/meta-raspberrypi
+    
+
+  poky:
+    url: https://github.com/soc-rpi-oss/poky
+    path: sources/raspberry-pi/poky
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: https://github.com/soc-rpi-oss/meta-openembedded
+    path: sources/raspberry-pi/meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-perl:
+
+  meta-qt5:
+    url: https://github.com/soc-rpi-oss/meta-qt5
+    path: sources/raspberry-pi/meta-qt5
+
+  meta-soc-rpi:
+    url: https://github.com/soccentric/meta-soc-rpi
+    branch: soc-rel-v2025.4
+    path: sources/raspberry-pi/meta-soc-rpi
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+
+local_conf_header:
+  reduce_diskspace: |
+    # Diskspace reduction disabled (user has plenty of space)
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+    BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+    PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+  build_variant: |
+    # Build variant configuration
+    BUILD_VARIANT = "${@os.getenv('BUILD_VARIANT', 'release')}"
+  variant_debug: |
+    # Debug variant settings
+    IMAGE_FEATURES:append = "${@' debug-tweaks dbg-pkgs tools-debug' if d.getVar('BUILD_VARIANT') == 'debug' else ''}"
+    INHIBIT_PACKAGE_STRIP = "${@'1' if d.getVar('BUILD_VARIANT') == 'debug' else '0'}"
+    INHIBIT_PACKAGE_DEBUG_SPLIT = "${@'1' if d.getVar('BUILD_VARIANT') == 'debug' else '0'}"
+  variant_production: |
+    # Production variant settings
+    IMAGE_FEATURES:append = "${@' read-only-rootfs' if d.getVar('BUILD_VARIANT') == 'production' else ''}"
+    EXTRA_IMAGE_FEATURES:append = "${@' ptest-pkgs' if d.getVar('BUILD_VARIANT') == 'production' else ''}"
+  shared_cache: |
+    # Shared cache directories
+    DL_DIR = "${@os.getenv('DL_DIR', '${TOPDIR}/downloads')}"
+    SSTATE_DIR = "${@os.getenv('SSTATE_DIR', '${TOPDIR}/sstate-cache')}"
+  rm_work_conditional: |
+    # rm_work disabled (user has plenty of space)
+  debug-tweaks: |
+    IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login post-install-logging"
+  diskmon: |
+    BB_DISKMON_DIRS = "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"
+  license: |
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"

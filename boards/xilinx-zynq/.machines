@@ -1,0 +1,68 @@
+# Supported Xilinx Zynq Machines
+# Format: one machine name per line
+# Lines starting with # are comments
+
+# Kria SOM
+k24-smk
+k24-smk-kd
+k24-smk-sdt
+k24c-sm
+k24c-sm-sdt
+k24i-sm
+k24i-sm-sdt
+k26-sm
+k26-sm-sdt
+k26-smk
+k26-smk-kr
+k26-smk-kr-sdt
+k26-smk-kv
+k26-smk-kv-sdt
+k26-smk-sdt
+kria-zynqmp-generic
+
+# Zynq-7000 Series
+microzed-zynq7
+minized-zynq7
+picozed-zynq7
+zc702-zynq7
+zc706-zynq7
+zedboard-zynq7
+zybo-linux-bd-zynq7
+zybo-zynq7
+
+# ZynqMP UltraScale+ Series
+zynqmp-cg-generic
+zynqmp-dr-generic
+zynqmp-eg-generic
+zynqmp-ev-generic
+zynqmp-generic
+zcu102-zynqmp
+zcu104-zynqmp
+zcu106-zynqmp
+zcu111-zynqmp
+zcu208-zynqmp
+zcu208-sdfec-zynqmp
+zcu216-zynqmp
+zcu670-zynqmp
+zcu1275-zynqmp
+zcu1285-zynqmp
+
+# Versal Series
+versal-2ve-2vm-generic
+versal-ai-core-generic
+versal-ai-edge-generic
+versal-generic
+versal-hbm-generic
+versal-net-generic
+versal-premium-generic
+versal-prime-generic
+vck190-emmc-versal
+vck190-ospi-versal
+vck190-versal
+vek280-versal
+vhk158-versal
+vmk180-emmc-versal
+vmk180-ospi-versal
+vmk180-versal
+vpk120-versal
+vpk180-versal

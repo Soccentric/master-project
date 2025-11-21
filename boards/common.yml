@@ -1,0 +1,67 @@
+# ==============================================================================
+# Common Base Configuration
+# This file contains common repository definitions used across all board families
+# Individual family configs can include this to reduce duplication
+# ==============================================================================
+
+header:
+  version: 8
+
+defaults:
+  repos:
+    branch: soc-rel-v2025.4
+
+# Common configuration headers used by most builds
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+
+local_conf_header:
+  reduce_diskspace: |
+    # Diskspace reduction disabled (user has plenty of space)
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+    BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+    PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+  build_variant: |
+    # Build variant configuration
+    BUILD_VARIANT = "${@os.getenv('BUILD_VARIANT', 'release')}"
+  variant_debug: |
+    # Debug variant settings
+    python __anonymous() {
+        if d.getVar('BUILD_VARIANT') == 'debug':
+            d.appendVar('IMAGE_FEATURES', ' debug-tweaks dbg-pkgs tools-debug')
+            d.setVar('INHIBIT_PACKAGE_STRIP', '1')
+            d.setVar('INHIBIT_PACKAGE_DEBUG_SPLIT', '1')
+    }
+  variant_production: |
+    # Production variant settings
+    python __anonymous() {
+        if d.getVar('BUILD_VARIANT') == 'production':
+            d.appendVar('IMAGE_FEATURES', ' read-only-rootfs')
+            d.appendVar('EXTRA_IMAGE_FEATURES', ' ptest-pkgs')
+    }
+  shared_cache: |
+    # Shared cache directories
+    DL_DIR = "${@os.getenv('DL_DIR', '${TOPDIR}/downloads')}"
+    SSTATE_DIR = "${@os.getenv('SSTATE_DIR', '${TOPDIR}/sstate-cache')}"
+  rm_work_conditional: |
+    # rm_work disabled (user has plenty of space)
+  debug-tweaks: |
+    IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login post-install-logging"
+  diskmon: |
+    BB_DISKMON_DIRS = "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"

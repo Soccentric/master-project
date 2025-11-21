@@ -1,0 +1,93 @@
+# ==============================================================================
+# NXP i.MX Family Configuration
+# This file serves as the master template for all NXP i.MX boards
+# Machine and target are substituted from command line arguments
+# ==============================================================================
+
+header:
+  version: 11
+
+defaults:
+  repos:
+    branch: soc-rel-v2025.4
+
+machine: __MACHINE__
+distro: fslc-wayland
+target: __TARGET__
+build_system: oe
+
+repos:
+  openembedded-core:
+    url: https://github.com/soc-imx-oss/openembedded-core
+    path: sources/nxp-imx/openembedded-core
+    layers:
+      meta: null
+
+  bitbake:
+    url: https://github.com/soc-imx-oss/bitbake
+    path: sources/nxp-imx/bitbake
+    layers:
+      bitbake: excluded
+
+  meta-openembedded:
+    url: https://github.com/soc-imx-oss/meta-openembedded
+
+    path: sources/nxp-imx/meta-openembedded
+    layers:
+      meta-oe: null
+      meta-filesystems: null
+      meta-gnome: null
+      meta-xfce: null
+      meta-initramfs: null
+      meta-networking: null
+      meta-multimedia: null
+      meta-python: null
+
+  meta-yocto:
+    url: https://github.com/soc-imx-oss/meta-yocto
+    path: sources/nxp-imx/meta-yocto
+    layers:
+      meta-poky: null
+
+  meta-freescale:
+    url: https://github.com/soc-imx-oss/meta-freescale
+
+    path: sources/nxp-imx/meta-freescale
+
+  meta-freescale-3rdparty:
+    url: https://github.com/soc-imx-oss/meta-freescale-3rdparty
+
+    path: sources/nxp-imx/meta-freescale-3rdparty
+
+  meta-freescale-distro:
+    url: https://github.com/soc-imx-oss/meta-freescale-distro
+
+    path: sources/nxp-imx/meta-freescale-distro
+
+  meta-soc-imx:
+    url: https://github.com/soccentric/meta-soc-imx
+
+    path: sources/nxp-imx/meta-soc-imx
+
+local_conf_header:
+  standard: |
+    CONF_VERSION = "2"
+    MACHINE = "__MACHINE__"
+  custom-local-conf: |
+    ACCEPT_FSL_EULA = "1"
+    DL_DIR = "${TOPDIR}/../sources/download"
+    SSTATE_DIR = "${TOPDIR}/../sources/sstate"
+  mask-problematic-recipes: |
+    # Mask recipes that cause GITPKGV expansion errors
+    # These recipes inherit gitpkgv.bbclass which has compatibility issues
+    BBMASK += "meta-openembedded/meta-multimedia/recipes-dvb/tvheadend/"
+    BBMASK += "meta-openembedded/meta-oe/recipes-connectivity/usbmuxd/"
+    BBMASK += "meta-openembedded/meta-oe/recipes-extended/libimobiledevice/libusbmuxd"
+    BBMASK += "meta-openembedded/meta-oe/recipes-support/freerdp/"
+    BBMASK += "meta-openembedded/meta-oe/recipes-support/inih/libinih_git.bb"
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""

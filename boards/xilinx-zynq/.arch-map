@@ -1,0 +1,68 @@
+# Xilinx Zynq Architecture Mapping
+# Format: machine:architecture
+# Zynq-7000 = arm (32-bit), ZynqMP/Versal = aarch64 (64-bit)
+
+# Kria SOM (ZynqMP - 64-bit)
+k24-smk:aarch64
+k24-smk-kd:aarch64
+k24-smk-sdt:aarch64
+k24c-sm:aarch64
+k24c-sm-sdt:aarch64
+k24i-sm:aarch64
+k24i-sm-sdt:aarch64
+k26-sm:aarch64
+k26-sm-sdt:aarch64
+k26-smk:aarch64
+k26-smk-kr:aarch64
+k26-smk-kr-sdt:aarch64
+k26-smk-kv:aarch64
+k26-smk-kv-sdt:aarch64
+k26-smk-sdt:aarch64
+kria-zynqmp-generic:aarch64
+
+# Zynq-7000 Series (32-bit)
+microzed-zynq7:arm
+minized-zynq7:arm
+picozed-zynq7:arm
+zc702-zynq7:arm
+zc706-zynq7:arm
+zedboard-zynq7:arm
+zybo-linux-bd-zynq7:arm
+zybo-zynq7:arm
+
+# ZynqMP UltraScale+ Series (64-bit)
+zynqmp-cg-generic:aarch64
+zynqmp-dr-generic:aarch64
+zynqmp-eg-generic:aarch64
+zynqmp-ev-generic:aarch64
+zynqmp-generic:aarch64
+zcu102-zynqmp:aarch64
+zcu104-zynqmp:aarch64
+zcu106-zynqmp:aarch64
+zcu111-zynqmp:aarch64
+zcu208-zynqmp:aarch64
+zcu208-sdfec-zynqmp:aarch64
+zcu216-zynqmp:aarch64
+zcu670-zynqmp:aarch64
+zcu1275-zynqmp:aarch64
+zcu1285-zynqmp:aarch64
+
+# Versal Series (64-bit)
+versal-2ve-2vm-generic:aarch64
+versal-ai-core-generic:aarch64
+versal-ai-edge-generic:aarch64
+versal-generic:aarch64
+versal-hbm-generic:aarch64
+versal-net-generic:aarch64
+versal-premium-generic:aarch64
+versal-prime-generic:aarch64
+vck190-emmc-versal:aarch64
+vck190-ospi-versal:aarch64
+vck190-versal:aarch64
+vek280-versal:aarch64
+vhk158-versal:aarch64
+vmk180-emmc-versal:aarch64
+vmk180-ospi-versal:aarch64
+vmk180-versal:aarch64
+vpk120-versal:aarch64
+vpk180-versal:aarch64

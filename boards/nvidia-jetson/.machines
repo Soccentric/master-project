@@ -1,0 +1,19 @@
+# Supported NVIDIA Jetson Machines
+# Format: one machine name per line
+# Lines starting with # are comments
+
+clara-agx-xavier-devkit
+jetson-agx-orin-devkit
+jetson-agx-orin-devkit-industrial
+jetson-agx-xavier-devkit
+jetson-agx-xavier-industrial
+jetson-orin-nano-devkit
+jetson-orin-nano-devkit-nvme
+jetson-xavier-nx-devkit
+jetson-xavier-nx-devkit-emmc
+p3509-a02-p3767-0000
+p3737-0000-p3701-0004
+p3737-0000-p3701-0005
+p3768-0000-p3767-0000
+p3768-0000-p3767-0001
+p3768-0000-p3767-0004

@@ -1,0 +1,23 @@
+# Supported Target Images for NVIDIA Jetson
+# Format: one target image per line
+# Lines starting with # are comments
+
+# Standard Yocto images
+core-image-base
+core-image-minimal
+core-image-full-cmdline
+core-image-sato
+core-image-weston
+
+# Jetson demo images
+demo-image-base
+demo-image-full
+
+# meta-soc-jetson specialized images
+jetson-image-base
+jetson-image-dds
+jetson-image-grpc
+jetson-image-iot
+jetson-image-ros2
+jetson-image-rust
+jetson-image-vision

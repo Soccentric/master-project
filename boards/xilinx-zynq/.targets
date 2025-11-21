@@ -1,0 +1,21 @@
+# Supported Target Images for Xilinx Zynq
+# Format: one target image per line
+# Lines starting with # are comments
+
+# PetaLinux images
+petalinux-image-minimal
+petalinux-image-full
+
+# Standard Yocto images
+core-image-minimal
+core-image-base
+core-image-full-cmdline
+
+# meta-soc-xilinx specialized images
+zynq-image-base
+zynq-image-dds
+zynq-image-grpc
+zynq-image-iot
+zynq-image-ros2
+zynq-image-rust
+zynq-image-vision
