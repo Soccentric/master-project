@@ -19,6 +19,9 @@ WORKSPACE_MOUNT := /workspace
 VERSION := 2.1.0
 TIMESTAMP := $(shell date +%Y%m%d_%H%M%S)
 
+# Load user configuration if it exists
+-include .builderrc
+
 # Build configuration (can be overridden)
 BUILD_VARIANT ?= release
 BB_NUMBER_THREADS ?= $(shell nproc)
@@ -102,6 +105,16 @@ setup-completion:
 prerequisites:
 	$(CHECK_TOOLS)
 	@echo -e "$(COLOR_GREEN)✓ All prerequisites satisfied$(COLOR_RESET)"
+
+.PHONY: doctor
+doctor:
+	@clear; echo -e "$(COLOR_BLUE)Running comprehensive system diagnostics...$(COLOR_RESET)"
+	@echo ""
+	@./scripts/preflight-check.sh
+
+.PHONY: preflight
+preflight:
+	@./scripts/preflight-check.sh "$${args[@]}"
 
 # ==============================================================================
 # Build targets
