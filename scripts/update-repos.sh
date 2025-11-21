@@ -37,7 +37,7 @@ for repo in $repos; do
         if [ "$FORCE" = true ]; then
             echo "  Force enabled. Committing and pushing..."
             git add .
-            git commit -m "Auto-commit uncommitted changes"
+            sweet_commit
             
             # Push to the current branch
             current_branch=$(git rev-parse --abbrev-ref HEAD)
