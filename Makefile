@@ -524,6 +524,14 @@ version:
 	@clear; echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System v$(VERSION)$(COLOR_RESET)"
 	@echo -e "Built on: $(TIMESTAMP)"
 
+.PHONY: history
+history:
+	@clear; ./scripts/build-history.sh show
+
+.PHONY: stats
+stats:
+	@clear; ./scripts/build-history.sh stats
+
 .PHONY: help
 help:
 	@clear; echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System v$(VERSION)$(COLOR_RESET)"
