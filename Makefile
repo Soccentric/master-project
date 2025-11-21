@@ -532,6 +532,19 @@ history:
 stats:
 	@clear; ./scripts/build-history.sh stats
 
+.PHONY: why-failed
+why-failed:
+	@clear; args=($(filter-out $@,$(MAKECMDGOALS))); \
+	if [ $${#args[@]} -eq 1 ]; then \
+		build_name="$${args[0]}"; \
+		./scripts/analyze-errors.sh "$$build_name"; \
+	else \
+		echo -e "$(COLOR_YELLOW)Error: Invalid arguments$(COLOR_RESET)"; \
+		echo "Usage: make why-failed <family>-<machine>"; \
+		echo "Example: make why-failed raspberry-pi-raspberrypi5"; \
+		exit 1; \
+	fi
+
 .PHONY: help
 help:
 	@clear; echo -e "$(COLOR_BOLD)$(COLOR_BLUE)KAS Board Building System v$(VERSION)$(COLOR_RESET)"
@@ -550,6 +563,7 @@ help:
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make history" "Show build history"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make stats" "Show build statistics"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make doctor" "Run comprehensive system diagnostics"
+	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make why-failed <family-machine>" "Analyze build failure and suggest fixes"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make clean <family-machine>" "Clean build artifacts"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make clean-all" "Clean all build artifacts"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make clean-shared" "Clean shared caches (downloads + sstate)"

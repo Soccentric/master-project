@@ -1,1 +1,33 @@
+# Shared caches and build outputs
 shared/
+
+# Build directories
+build/
+sources/
+artifacts/
+
+# Build history
+.build-history/
+
+# User configuration
+.builderrc
+
+# Temporary files
+*.tmp
+.kas-temp.yml
+/tmp/
+
+# Editor backups
+*~
+*.swp
+*.swo
+.*.sw?
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
