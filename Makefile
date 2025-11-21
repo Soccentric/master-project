@@ -116,6 +116,11 @@ build: prerequisites docker-build
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
+		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
+		if [ ! -f "$$yml_file" ]; then \
+			echo -e "$(COLOR_RED)Error: Configuration file not found: $$yml_file$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		build_name="$$family-$$machine"; \
 		board_build_dir="$(BUILD_DIR)/$$build_name"; \
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
@@ -204,6 +209,11 @@ sdk: prerequisites docker-build
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
+		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
+		if [ ! -f "$$yml_file" ]; then \
+			echo -e "$(COLOR_RED)Error: Configuration file not found: $$yml_file$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		build_name="$$family-$$machine"; \
 		board_build_dir="$(BUILD_DIR)/$$build_name"; \
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
@@ -271,6 +281,11 @@ shell: prerequisites docker-build
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
+		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
+		if [ ! -f "$$yml_file" ]; then \
+			echo -e "$(COLOR_RED)Error: Configuration file not found: $$yml_file$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		build_name="$$family-$$machine"; \
 		board_build_dir="$(BUILD_DIR)/$$build_name"; \
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
@@ -327,6 +342,11 @@ esdk: prerequisites docker-build
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
+			exit 1; \
+		fi; \
+		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
+		if [ ! -f "$$yml_file" ]; then \
+			echo -e "$(COLOR_RED)Error: Configuration file not found: $$yml_file$(COLOR_RESET)"; \
 			exit 1; \
 		fi; \
 		build_name="$$family-$$machine"; \
