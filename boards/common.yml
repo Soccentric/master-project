@@ -34,19 +34,13 @@ local_conf_header:
     BUILD_VARIANT = "${@os.getenv('BUILD_VARIANT', 'release')}"
   variant_debug: |
     # Debug variant settings
-    python __anonymous() {
-        if d.getVar('BUILD_VARIANT') == 'debug':
-            d.appendVar('IMAGE_FEATURES', ' debug-tweaks dbg-pkgs tools-debug')
-            d.setVar('INHIBIT_PACKAGE_STRIP', '1')
-            d.setVar('INHIBIT_PACKAGE_DEBUG_SPLIT', '1')
-    }
+    IMAGE_FEATURES:append = "${@' debug-tweaks dbg-pkgs tools-debug' if d.getVar('BUILD_VARIANT') == 'debug' else ''}"
+    INHIBIT_PACKAGE_STRIP = "${@'1' if d.getVar('BUILD_VARIANT') == 'debug' else ''}"
+    INHIBIT_PACKAGE_DEBUG_SPLIT = "${@'1' if d.getVar('BUILD_VARIANT') == 'debug' else ''}"
   variant_production: |
     # Production variant settings
-    python __anonymous() {
-        if d.getVar('BUILD_VARIANT') == 'production':
-            d.appendVar('IMAGE_FEATURES', ' read-only-rootfs')
-            d.appendVar('EXTRA_IMAGE_FEATURES', ' ptest-pkgs')
-    }
+    IMAGE_FEATURES:append = "${@' read-only-rootfs' if d.getVar('BUILD_VARIANT') == 'production' else ''}"
+    EXTRA_IMAGE_FEATURES:append = "${@' ptest-pkgs' if d.getVar('BUILD_VARIANT') == 'production' else ''}"
   shared_cache: |
     # Shared cache directories
     DL_DIR = "${@os.getenv('DL_DIR', '${TOPDIR}/downloads')}"
