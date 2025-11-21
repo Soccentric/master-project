@@ -16,26 +16,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     locales \
     sudo \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set locale
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-
-# Install Kas
-RUN pip3 install kas
-
-# Install additional tools for Yocto builds
-RUN apt-get update && apt-get install -y \
     gawk \
-    wget \
     git-core \
     diffstat \
-    unzip \
     texinfo \
     gcc-multilib \
-    build-essential \
     chrpath \
     socat \
     cpio \
@@ -56,6 +41,14 @@ RUN apt-get update && apt-get install -y \
     libtinfo5 \
     file \
     && rm -rf /var/lib/apt/lists/*
+
+# Set locale
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# Install Kas (pinned version)
+RUN pip3 install kas==4.3.2
 
 # Create a user for building
 RUN useradd -m -s /bin/bash yocto && echo "yocto:yocto" | chpasswd && usermod -aG sudo yocto

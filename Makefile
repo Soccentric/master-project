@@ -113,24 +113,7 @@ build: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
-		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
-		if [ ! -f "$$yml_file" ]; then \
-			echo -e "$(COLOR_YELLOW)Error: Family configuration '$$family' not found$(COLOR_RESET)"; \
-			echo "Available families: raspberry-pi, xilinx-zynq, nvidia-jetson, nxp-imx"; \
-			exit 1; \
-		fi; \
-		machines_file="$(BOARDS_DIR)/$$family/.machines"; \
-		targets_file="$(BOARDS_DIR)/$$family/.targets"; \
-		if ! grep -qx "$$machine" "$$machines_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Machine '$$machine' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported machines:"; \
-			grep -v "^#" "$$machines_file" | grep -v "^$$" | sed 's/^/  • /'; \
-			exit 1; \
-		fi; \
-		if ! grep -qx "$$target" "$$targets_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Target '$$target' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported targets:"; \
-			grep -v "^#" "$$targets_file" | grep -v "^$$" | sed 's/^/  • /'; \
+		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
 		build_name="$$family-$$machine"; \
@@ -218,24 +201,7 @@ sdk: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
-		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
-		if [ ! -f "$$yml_file" ]; then \
-			echo -e "$(COLOR_YELLOW)Error: Family configuration '$$family' not found$(COLOR_RESET)"; \
-			echo "Available families: raspberry-pi, xilinx-zynq, nvidia-jetson, nxp-imx"; \
-			exit 1; \
-		fi; \
-		machines_file="$(BOARDS_DIR)/$$family/.machines"; \
-		targets_file="$(BOARDS_DIR)/$$family/.targets"; \
-		if ! grep -qx "$$machine" "$$machines_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Machine '$$machine' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported machines:"; \
-			grep -v "^#" "$$machines_file" | grep -v "^$$" | sed 's/^/  • /'; \
-			exit 1; \
-		fi; \
-		if ! grep -qx "$$target" "$$targets_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Target '$$target' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported targets:"; \
-			grep -v "^#" "$$targets_file" | grep -v "^$$" | sed 's/^/  • /'; \
+		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
 		build_name="$$family-$$machine"; \
@@ -302,24 +268,7 @@ shell: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
-		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
-		if [ ! -f "$$yml_file" ]; then \
-			echo -e "$(COLOR_YELLOW)Error: Family configuration '$$family' not found$(COLOR_RESET)"; \
-			echo "Available families: raspberry-pi, xilinx-zynq, nvidia-jetson, nxp-imx"; \
-			exit 1; \
-		fi; \
-		machines_file="$(BOARDS_DIR)/$$family/.machines"; \
-		targets_file="$(BOARDS_DIR)/$$family/.targets"; \
-		if ! grep -qx "$$machine" "$$machines_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Machine '$$machine' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported machines:"; \
-			grep -v "^#" "$$machines_file" | grep -v "^$$" | sed 's/^/  • /'; \
-			exit 1; \
-		fi; \
-		if ! grep -qx "$$target" "$$targets_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Target '$$target' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported targets:"; \
-			grep -v "^#" "$$targets_file" | grep -v "^$$" | sed 's/^/  • /'; \
+		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
 		build_name="$$family-$$machine"; \
@@ -377,24 +326,7 @@ esdk: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
-		yml_file="$(BOARDS_DIR)/$$family/$$family.yml"; \
-		if [ ! -f "$$yml_file" ]; then \
-			echo -e "$(COLOR_YELLOW)Error: Family configuration '$$family' not found$(COLOR_RESET)"; \
-			echo "Available families: raspberry-pi, xilinx-zynq, nvidia-jetson, nxp-imx"; \
-			exit 1; \
-		fi; \
-		machines_file="$(BOARDS_DIR)/$$family/.machines"; \
-		targets_file="$(BOARDS_DIR)/$$family/.targets"; \
-		if ! grep -qx "$$machine" "$$machines_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Machine '$$machine' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported machines:"; \
-			grep -v "^#" "$$machines_file" | grep -v "^$$" | sed 's/^/  • /'; \
-			exit 1; \
-		fi; \
-		if ! grep -qx "$$target" "$$targets_file" 2>/dev/null; then \
-			echo -e "$(COLOR_YELLOW)Error: Target '$$target' not supported for $$family$(COLOR_RESET)"; \
-			echo "Supported targets:"; \
-			grep -v "^#" "$$targets_file" | grep -v "^$$" | sed 's/^/  • /'; \
+		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
 		build_name="$$family-$$machine"; \
@@ -617,15 +549,30 @@ help:
 # Clean targets
 # ==============================================================================
 .PHONY: clean-shared
-clean-shared:
-	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove all shared caches (downloads and sstate for all families)$(COLOR_RESET)"
+clean-shared: clean-downloads clean-sstate
+
+.PHONY: clean-downloads
+clean-downloads:
+	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove the shared downloads cache$(COLOR_RESET)"
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo -e "$(COLOR_YELLOW)Removing shared caches...$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Removing shared downloads...$(COLOR_RESET)"; \
 		rm -rf $(SHARED_DL_DIR); \
+		echo -e "$(COLOR_GREEN)✓ Shared downloads removed$(COLOR_RESET)"; \
+	else \
+		echo "Cancelled"; \
+	fi
+
+.PHONY: clean-sstate
+clean-sstate:
+	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove the shared sstate cache (all families)$(COLOR_RESET)"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo -e "$(COLOR_YELLOW)Removing shared sstate...$(COLOR_RESET)"; \
 		rm -rf $(SHARED_SSTATE_BASE_DIR); \
-		echo -e "$(COLOR_GREEN)✓ Shared caches removed$(COLOR_RESET)"; \
+		echo -e "$(COLOR_GREEN)✓ Shared sstate removed$(COLOR_RESET)"; \
 	else \
 		echo "Cancelled"; \
 	fi

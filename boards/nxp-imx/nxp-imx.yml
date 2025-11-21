@@ -6,6 +6,8 @@
 
 header:
   version: 11
+  includes:
+    - boards/common.yml
 
 defaults:
   repos:
@@ -70,13 +72,8 @@ repos:
     path: sources/nxp-imx/meta-soc-imx
 
 local_conf_header:
-  standard: |
-    CONF_VERSION = "2"
-    MACHINE = "__MACHINE__"
   custom-local-conf: |
     ACCEPT_FSL_EULA = "1"
-    DL_DIR = "${TOPDIR}/../sources/download"
-    SSTATE_DIR = "${TOPDIR}/../sources/sstate"
   mask-problematic-recipes: |
     # Mask recipes that cause GITPKGV expansion errors
     # These recipes inherit gitpkgv.bbclass which has compatibility issues
@@ -85,9 +82,3 @@ local_conf_header:
     BBMASK += "meta-openembedded/meta-oe/recipes-extended/libimobiledevice/libusbmuxd"
     BBMASK += "meta-openembedded/meta-oe/recipes-support/freerdp/"
     BBMASK += "meta-openembedded/meta-oe/recipes-support/inih/libinih_git.bb"
-
-bblayers_conf_header:
-  standard: |
-    POKY_BBLAYERS_CONF_VERSION = "2"
-    BBPATH = "${TOPDIR}"
-    BBFILES ?= ""
