@@ -150,3 +150,7 @@ repos:
     layers:
       meta-amd-adaptive-socs-bsp:
       meta-amd-adaptive-socs-core:
+
+local_conf_header:
+  add_user: |
+    EXTRA_USERS_PARAMS = "useradd -m -p '' xilinx; usermod -a -G sudo xilinx;"

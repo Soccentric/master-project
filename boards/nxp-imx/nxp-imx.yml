@@ -82,3 +82,5 @@ local_conf_header:
     BBMASK += "meta-openembedded/meta-oe/recipes-extended/libimobiledevice/libusbmuxd"
     BBMASK += "meta-openembedded/meta-oe/recipes-support/freerdp/"
     BBMASK += "meta-openembedded/meta-oe/recipes-support/inih/libinih_git.bb"
+  add_user: |
+    EXTRA_USERS_PARAMS = "useradd -m -p '' imx; usermod -a -G sudo imx;"

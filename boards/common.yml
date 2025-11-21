@@ -23,12 +23,13 @@ local_conf_header:
     # Diskspace reduction disabled (user has plenty of space)
   standard: |
     CONF_VERSION = "2"
-    PACKAGE_CLASSES = "package_rpm"
+    PACKAGE_CLASSES = "package_ipk package_deb package_rpm"
     SDKMACHINE = "x86_64"
     USER_CLASSES = "buildstats"
     PATCHRESOLVE = "noop"
     BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
     PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+    INIT_MANAGER = "sysvinit"
   build_variant: |
     # Build variant configuration
     BUILD_VARIANT = "${@os.getenv('BUILD_VARIANT', 'release')}"
@@ -59,3 +60,8 @@ local_conf_header:
         HALT,${DL_DIR},100M,1K \
         HALT,${SSTATE_DIR},100M,1K \
         HALT,/tmp,10M,1K"
+  custom_packages: |
+    # Common packages for all boards - add your packages here
+    IMAGE_INSTALL:append = " vim git htop openssh sudo"
+    IMAGE_INSTALL:remove = " "
+    PACKAGE_EXCLUDE = ""

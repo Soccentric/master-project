@@ -53,3 +53,5 @@ repos:
 local_conf_header:
   license: |
     LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+  add_user: |
+    EXTRA_USERS_PARAMS = "useradd -m -p '' pi; usermod -a -G sudo pi;"
