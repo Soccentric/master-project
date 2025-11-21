@@ -153,6 +153,7 @@ build: prerequisites docker-build
 		mkdir -p "$(SHARED_DL_DIR)" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
+		./scripts/build-history.sh start "$$family" "$$machine" "$$target" "$(BUILD_VARIANT)"; \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting build$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Family:  $$family$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Machine: $$machine$(COLOR_RESET)"; \
@@ -183,6 +184,7 @@ build: prerequisites docker-build
 			rm -f "$$temp_yml"; \
 			end_time=$$(date +%s); \
 			duration=$$((end_time - start_time)); \
+			./scripts/build-history.sh end "$$family" "$$machine" "$$target" "SUCCESS" "$$start_time"; \
 			echo -e "$(COLOR_BOLD)$(COLOR_GREEN)✓ Build completed successfully$(COLOR_RESET)"; \
 			echo -e "$(COLOR_GREEN)Duration: $$duration seconds$(COLOR_RESET)"; \
 			echo -e "Build artifacts: $$board_build_dir"; \
@@ -191,6 +193,7 @@ build: prerequisites docker-build
 			rm -f "$$temp_yml"; \
 			end_time=$$(date +%s); \
 			duration=$$((end_time - start_time)); \
+			./scripts/build-history.sh end "$$family" "$$machine" "$$target" "FAILED" "$$start_time"; \
 			echo -e "$(COLOR_RED)✗ Build failed$(COLOR_RESET)"; \
 			echo -e "$(COLOR_YELLOW)Duration: $$duration seconds$(COLOR_RESET)"; \
 			echo -e "$(COLOR_YELLOW)Check logs: $$board_build_dir/tmp/log/$(COLOR_RESET)"; \
