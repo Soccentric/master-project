@@ -159,3 +159,13 @@ repos:
 local_conf_header:
   add_user: |
     EXTRA_USERS_PARAMS = "useradd -m -p '' xilinx; usermod -a -G sudo xilinx;"
+
+  license: |
+    LICENSE_FLAGS_ACCEPTED:append = " xilinx"
+
+  xilinx_standalone: |
+    XILINX_WITH_ESW = "sdt"
+    BBMULTICONFIG += "fsbl-fw zynqmp-pmufw"
+
+  distro_features: |
+    DISTRO_FEATURES:append = " rauc virtualization"
