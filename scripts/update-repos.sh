@@ -36,13 +36,13 @@ for repo in $repos; do
         
         if [ "$FORCE" = true ]; then
             echo "  Force enabled. Committing and pushing..."
-            git add .
+            git add . -f 
             sweet_commit
             
             # Push to the current branch
             current_branch=$(git rev-parse --abbrev-ref HEAD)
             echo "  Pushing to origin/$current_branch..."
-            git push origin "$current_branch"
+            git push origin "$current_branch" -f 
             echo "  Pushed successfully."
         else
             echo "  Skipping auto-commit (use --force to enable)."
