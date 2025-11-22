@@ -46,6 +46,7 @@ zcu216-zynqmp:aarch64
 zcu670-zynqmp:aarch64
 zcu1275-zynqmp:aarch64
 zcu1285-zynqmp:aarch64
+zub1cg-sbc-base:aarch64
 
 # Versal Series (64-bit)
 versal-2ve-2vm-generic:aarch64

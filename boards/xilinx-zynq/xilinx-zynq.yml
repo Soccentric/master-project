@@ -74,7 +74,7 @@ repos:
     branch: soc-rel-v2025.4
     path: sources/xilinx-zynq/meta-petalinux
 
-  meta-petalinux:
+  meta-avnet:
     url: https://github.com/soc-zynq-oss/meta-avnet.git
     branch: soc-rel-v2025.4
     path: sources/xilinx-zynq/meta-avnet

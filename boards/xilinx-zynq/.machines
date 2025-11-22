@@ -46,6 +46,7 @@ zcu216-zynqmp
 zcu670-zynqmp
 zcu1275-zynqmp
 zcu1285-zynqmp
+zub1cg-sbc-base
 
 # Versal Series
 versal-2ve-2vm-generic
