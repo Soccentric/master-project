@@ -167,9 +167,18 @@ local_conf_header:
     XILINX_WITH_ESW = "sdt"
     SKIP_META_XILINX_TOOLS_SANITY_CHECK = "1"
 
-  fsbl_override:
-    zub1cg-sbc-base: |
-      EXTRA_IMAGEDEPENDS = "libyaml-native python3-cython-native python3-pyyaml-native trusted-firmware-a virtual/bootloader u-boot-xlnx-scr avnet-boot-scr"
+  fsbl_override: |
+    EXTRA_IMAGEDEPENDS:pn-core-image-full-cmdline:zub1cg-sbc-base = "libyaml-native python3-cython-native python3-pyyaml-native trusted-firmware-a virtual/bootloader u-boot-xlnx-scr avnet-boot-scr"
+    IMAGE_BOOT_FILES:zub1cg-sbc-base = "boot.bin boot.scr Image"
 
   distro_features: |
     DISTRO_FEATURES:append = " rauc virtualization"
+
+  skip_recipes: |
+    # Skip problematic recipes with deprecated protocols or license issues
+    SKIP_RECIPE[wilc3000-fw] = "Uses deprecated git protocol"
+    SKIP_RECIPE[mwifiex-fw] = "Uses deprecated git protocol"
+    SKIP_RECIPE[connman-gtk] = "Missing branch parameter"
+    SKIP_RECIPE[sick-scan-xd] = "Invalid license format"
+    SKIP_RECIPE[off-highway-can] = "Invalid license format"
+    SKIP_RECIPE[babeltrace] = "Uses deprecated distutils classes"
