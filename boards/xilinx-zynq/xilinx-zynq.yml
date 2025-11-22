@@ -165,7 +165,10 @@ local_conf_header:
 
   xilinx_standalone: |
     XILINX_WITH_ESW = "sdt"
-    BBMULTICONFIG += "fsbl-fw zynqmp-pmufw"
+    SKIP_META_XILINX_TOOLS_SANITY_CHECK = "1"
+
+  fsbl_override: |
+    EXTRA_IMAGEDEPENDS:zub1cg-sbc = "libyaml-native python3-cython-native python3-pyyaml-native trusted-firmware-a virtual/bootloader u-boot-xlnx-scr avnet-boot-scr"
 
   distro_features: |
     DISTRO_FEATURES:append = " rauc virtualization"
