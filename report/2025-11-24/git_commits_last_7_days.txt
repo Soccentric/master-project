@@ -1,0 +1,369 @@
+commit e09382e2444cabc36beb2532298a37028d3921f6
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Mon Nov 24 10:19:03 2025 -0800
+
+    Add robust script existence checks and enhanced error handling to Makefile
+    
+    Updated Makefile to verify that all helper scripts (preflight-check.sh, validate-target.sh, build-history.sh, analyze-errors.sh) are present and executable before invoking them, providing clear error messages. Introduced timestamp variable for temporary YML files, improved directory creation with error handling, and added Docker availability checks. These enhancements prevent silent failures, aid debugging, and ensure the build process runs reliably.
+    
+    * Makefile : Added script existence checks, error handling, timestamps, Docker checks, improved directory creation and temp file cleanup.
+
+commit 9d5a4f6baeb1453999927777479880eef6a6ae96
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Mon Nov 24 10:15:41 2025 -0800
+
+    Rework build caching, add reporting files, and enhance build pipeline
+    
+    Reorganized Makefile to use per‑board download caches and per‑build sstate directories, simplifying cache management and reducing duplication. Updated build, sdk, and shell targets with new cache logic, added history tracking, stats, and doctor targets, and improved info output. Introduced new report files: a log of the last seven days’ commits and a summary of repository tool progress. These changes streamline builds, provide better diagnostics, and document recent work.
+    
+    * Makefile : updated cache paths, added history and stats targets, improved build logic
+    * report/2025-11-22/git_commits_last_7_days.txt : new file with recent commit log
+    * report/2025-11-22/repo-tools_2025-11-22.md : new weekly repo-tools summary
+
+commit b63fe66559fcf74919ed7cb47eb20710420a2169
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Sat Nov 22 08:44:25 2025 -0800
+
+    Add conditional FSBL overrides, boot file mapping, and recipe skips for Xilinx Zynq board configuration
+    
+    The board configuration is updated to use a conditional FSBL dependency syntax tied to the core image, ensuring correct extra image dependencies. A new IMAGE_BOOT_FILES entry defines required boot artifacts for the zub1cg-sbc-base target. Additionally, a skip_recipes section lists several recipes to be excluded due to deprecated git protocols, missing branch parameters, or invalid license specifications, enhancing build reliability.
+    
+    * boards/xilinx-zynq/xilinx-zynq.yml : Updated fsbl_override with conditional dependency, added IMAGE_BOOT_FILES entry, and introduced skip_recipes block to omit problematic recipes.
+
+commit a4072188beb4aa70b79e1e1bf927dc93361c69be
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Sat Nov 22 08:34:20 2025 -0800
+
+    Correct fsbl_override syntax for ZUB1CG SBC base in Xilinx Zynq board configuration
+    
+    The fsbl_override section in the Xilinx Zynq board YAML was incorrectly formatted as a simple string with a colon in the variable assignment. This commit restructures the block to introduce a dedicated key (zub1cg-sbc-base) and uses proper assignment syntax, ensuring Yocto parses the EXTRA_IMAGEDEPENDS correctly. This fix improves build reliability for the ZUB1CG SBC variant.
+    
+    * boards/xilinx-zynq/xilinx-zynq.yml : changed fsbl_override from a plain string to a keyed block with proper assignment syntax for EXTRA_IMAGEDEPENDS.
+
+commit 62079f1eaac1f2944b38601473b87ace64905dd4
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Sat Nov 22 08:34:00 2025 -0800
+
+    Skip Xilinx tools sanity check and add FSBL extra image dependencies for Zynq board
+    
+    The update disables the meta‑xilinx tools sanity check for the xilinx_standalone configuration and introduces a new fsbl_override section that specifies additional image dependencies required for the zub1cg‑sbc, including libyaml-native, python3‑cython-native, python3‑pyyaml-native, trusted‑firmware‑a, virtual/bootloader, u‑boot‑xlnx‑scr and avnet‑boot‑scr. This ensures proper build ordering and avoids unnecessary sanity failures.
+    
+    * boards/xilinx-zynq/xilinx-zynq.yml : added SKIP_META_XILINX_TOOLS_SANITY_CHECK flag and introduced fsbl_override with EXTRA_IMAGEDEPENDS for zub1cg-sbc.
+
+commit 51826b7c8c428448bb9ab64d5717a6f0539c82a6
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Sat Nov 22 08:17:08 2025 -0800
+
+    Enable Xilinx license acceptance and add ESW, firmware, and distro features for RAUC virtualization
+    
+    The board configuration for Xilinx Zynq is updated to automatically accept the Xilinx license, enable the standalone ESW environment, include additional firmware binaries (FSBL and ZynqMP PMUFW), and extend the distribution features with RAUC and virtualization support. These changes streamline build setup and expand supported functionality for the board.
+    
+    * boards/xilinx-zynq/xilinx-zynq.yml : added LICENSE_FLAGS_ACCEPTED for Xilinx, set XILINX_WITH_ESW to "sdt", appended BBMULTICONFIG with fsbl-fw and zynqmp-pmufw, and extended DISTRO_FEATURES with "rauc virtualization".
+
+commit c96cfb0d789466245be6b11635763ca5739e490e
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Sat Nov 22 08:07:23 2025 -0800
+
+    Add support for Zub1CG SBC Base board and rename meta-petalinux repository to meta‑avnet
+    
+    The Zub1CG SBC Base board is now recognized by the Xilinx Zynq build system. Its architecture mapping and machine list entries are added. Additionally, the meta‑petalinux repository entry in xilinx‑zynq.yml is renamed to meta‑avnet to reflect the upstream source, while keeping the same URL, branch, and path.
+    
+    * boards/xilinx-zynq/.arch-map : added zub1cg-sbc-base entry with aarch64 architecture
+    * boards/xilinx-zynq/.machines : added zub1cg-sbc-base to the machine list
+    * boards/xilinx-zynq/xilinx-zynq.yml : renamed repository key from meta-petalinux to meta-avnet, preserving URL, branch, and path
+
+commit 5f625cfeb254258801c3ae78ba978eb6fe3aef43
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 17:42:47 2025 -0800
+
+    Add Avnet meta‑avnet repository to Xilinx‑Zynq board configuration
+    
+    The Xilinx‑Zynq board YAML is updated to include a new repository entry for the Avnet meta‑avnet layer (meta‑petalinux). This ensures the build system pulls the Avnet‑specific meta‑layers alongside existing sources, aligning with the soc‑rel‑v2025.4 branch.
+    
+    * boards/xilinx-zynq/xilinx-zynq.yml : added meta-petalinux entry with URL to meta-avnet repo, branch soc-rel-v2025.4, and path sources/xilinx-zynq/meta-avnet.
+
+commit b9898ff55183a0089b96710c408d76eff23a33fb
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 16:06:27 2025 -0800
+
+    Force push updates: add -f flag to git add and git push in update-repos script
+    
+    When the script is run with the --force option, it now forces adding all changes (including ignored files) and forces the push to the current branch. This ensures that forced updates correctly overwrite remote history without manual intervention.
+    
+    * scripts/update-repos.sh : added -f to git add and git push commands when FORCE is true to force inclusion of ignored files and overwrite the remote branch.
+
+commit b9cae5d52dc24523f7dc57d878326ba47c2788f4
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 10:06:53 2025 -0800
+
+    Add comprehensive implementation summary documenting new docs, bug fixes, config management, preflight checks, and build history features
+    
+    Introduces IMPLEMENTATION_SUMMARY2.md which outlines all recent high‑priority improvements, including extensive documentation updates, critical bug resolution, .builderrc configuration support, pre‑flight validation scripts, and a build‑history tracking tool. This file serves as a reference for contributors and users, clarifying new Makefile targets and usage guidelines.
+    
+    * IMPLEMENTATION_SUMMARY2.md : added detailed implementation summary covering documentation, bug fixes, configuration management, preflight validation, and build history tracking features
+
+commit 7f904a74974589296bb3d8025071e1d4b0ca8f00
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 09:26:28 2025 -0800
+
+    Use sweet_commit wrapper instead of raw git commit in update-repos.sh
+    
+    The script now calls the sweet_commit function when force‑pushing, replacing the direct git commit command. This ensures consistent commit formatting, hooks, and any additional logic defined in sweet_commit, improving automation reliability.
+    
+    * scripts/update-repos.sh : replaced direct `git commit -m "Auto-commit uncommitted changes"` with a call to `sweet_commit` for standardized commit handling.
+
+commit e1f32c8e2a3a216072debac62837572495c6125c
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 09:11:18 2025 -0800
+
+    Add common package options and default sudo users across all board configurations
+    
+    This update expands the default package handling by enabling ipk and deb formats alongside rpm, switches the init system to sysvinit, and introduces a common package list (vim, git, htop, openssh, sudo). It also adds a default user with sudo privileges for each supported board (jetson, imx, pi, xilinx). These changes simplify image customization and provide immediate administrative access on target devices.
+    
+    * boards/common.yml : added ipk and deb to PACKAGE_CLASSES, set INIT_MANAGER to sysvinit, created custom_packages section installing common utilities and placeholders for IMAGE_INSTALL and PACKAGE_EXCLUDE
+    * boards/nvidia-jetson/nvidia-jetson.yml : added add_user section to create jetson user and grant sudo rights
+    * boards/nxp-imx/nxp-imx.yml : added add_user section to create imx user and grant sudo rights
+    * boards/raspberry-pi/raspberry-pi.yml : added add_user section to create pi user and grant sudo rights
+    * boards/xilinx-zynq/xilinx-zynq.yml : added add_user section to create xilinx user and grant sudo rights
+
+commit 96197b172db3ee557cc1f59c0f02aa35814a0ec9
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 08:36:32 2025 -0800
+
+    Replace inline Python variant logic with Yocto conditional appends in common.yml
+    
+    The patch removes embedded Python anonymous functions used to set IMAGE_FEATURES, INHIBIT_PACKAGE_STRIP, and INHIBIT_PACKAGE_DEBUG_SPLIT for the debug variant and to add read‑only‑rootfs and ptest‑pkgs for the production variant. Instead it uses Yocto's conditional variable appends, making the configuration clearer, reducing runtime Python evaluation and aligning with best practices. This change simplifies variant handling while preserving existing behavior.
+    
+    * boards/common.yml : Replaced Python anonymous functions with conditional variable appends for debug and production variant settings, simplifying logic.
+
+commit b0fc497ce05e70817f15782bfbf2882aaa12bd10
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Fri Nov 21 08:32:22 2025 -0800
+
+    Add quick-build.sh script to automate multi‑platform image builds
+    
+    Introduce a new executable script, quick-build.sh, that runs the make build command for several target platforms (Raspberry Pi, Nvidia Jetson, NXP i.MX, and Xilinx Zynq) using the core-image-full-cmdline configuration. This provides a convenient single entry point for developers to trigger builds across supported hardware.
+    
+    * quick-build.sh : new script invoking make build for four platforms with core-image-full-cmdline configuration
+
+commit 4b94d9483766cf6395c313d27a309abe957d7d33
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:55:06 2025 -0800
+
+    Delete .builderrc.example file from the repository
+    Removed the example Builder configuration file; it is no longer needed in the source tree.
+    The example was redundant because users can generate a .builderrc directly or use the provided template elsewhere.
+    Eliminating the file reduces clutter and the risk of developers accidentally using outdated defaults.
+    Keeping only the active configuration file (.builderrc) streamlines maintenance and documentation.
+
+commit ec72fb07d75ea31c37436a5f2460ec333d884d9f
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:51:52 2025 -0800
+
+    Add IMPLEMENTATION_SUMMARY.md to document project status and planned work.
+    Create comprehensive README.md with quick‑start, architecture, platform matrix, command guide, config support, troubleshooting, performance tips, and advanced CI/CD usage.
+    Add boards/raspberry‑pi/README.md containing machine specs, hardware setup, image targets, quick‑start examples, customization instructions, and troubleshooting.
+    Introduce CONTRIBUTING.md outlining development setup, style guidelines, testing, pull‑request workflow, and how to add new board families.
+    Fix undefined yml_file variable in build/sdk/esdk/shell targets by defining the variable, validating file existence, and improving error messages.
+    Create .builderrc.example template for user configuration, including build variants, tuning options (BB_NUMBER_THREADS, PARALLEL_MAKE), proxy settings, Docker limits, and remote mirror configuration.
+    Update Makefile to automatically include .builderrc with `-include .builderrc` and establish configuration precedence: .builderrc > environment > defaults.
+    Add scripts/preflight-check.sh to perform a comprehensive system validation before building, ensuring all prerequisites are met.
+
+commit 3f24151522da312857d5d9ef85f29fc350174585
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:51:06 2025 -0800
+
+    Add IMPLEMENTATION_SUMMARY.md – Create an empty file to serve as a dedicated placeholder for the project’s implementation summary documentation. This establishes a consistent documentation location for future developers to populate with a concise overview of the implementation details, ensuring the repository’s documentation structure remains organized and ready for updates.
+
+commit 1a540caa12cfbdb4ac9903debd49f8997da2cc92
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:49:56 2025 -0800
+
+    Add comprehensive .gitignore and why-failed target to Makefile
+    
+    - Replaced the single-line .gitignore with a detailed list of ignore patterns.
+    - Added 'shared/' to exclude shared caches and build outputs.
+    - Included 'build/', 'sources/', and 'artifacts/' to ignore various build artifact directories.
+    - Added '.build-history/' to exclude history logs generated by the build system.
+    - Added '.builderrc' to ignore user-specific configuration files.
+    - Ignored temporary files with '*.tmp', '.kas-temp.yml', and '/tmp/' patterns.
+    - Added editor backup patterns '*~', '*.swp', '*.swo', and '.*.sw?' to prevent backup files from being tracked.
+    - Added IDE workspace patterns '.vscode/', '.idea/', and '*.iml' to keep IDE-specific files out of version control.
+    - Included OS-specific hidden files '.DS_Store' and 'Thumbs.db' to avoid cluttering the repository.
+    - Updated Makefile to introduce a new 'why-failed' target for diagnosing build failures.
+    - Implemented argument parsing to require a build name and call scripts/analyze-errors.sh with that name.
+    - Added error handling for missing or invalid arguments, providing a clear usage message.
+    - Declared the target as .PHONY to avoid accidental file conflicts.
+    - Updated the help output to list the new 'make why-failed <family-machine>' command with a usage example.
+    - Minor formatting adjustments and added comments for clarity.
+
+commit 2693dacd6bbfda032d130150c89298c5cac91ca4
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:49:08 2025 -0800
+
+    Add history, stats, and doctor targets to Makefile help
+    
+    - Add a "make history" entry to the help menu so developers can quickly view build history without external tools.
+    - Add a "make stats" entry to the help menu to display build statistics such as duration, resource usage, and artifact counts, aiding performance tuning.
+    - Add a "make doctor" entry to the help menu that runs a comprehensive diagnostics script, checking the toolchain, dependencies, and environment health for easier issue triage.
+    - Update the help section formatting to keep all new entries aligned with existing ones and preserve consistent color usage.
+    - Position the new commands after existing informational targets for better visibility.
+    - No changes to build rules or functionality; only informational help entries were added.
+
+commit 8dcd4485dd45760f2c93a4706c1e8ace04ecb848
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:48:37 2025 -0800
+
+    Add history and stats targets to the Makefile to enable quick inspection of build history data
+    
+    - Add a new phony target `history` that clears the screen and runs `./scripts/build-history.sh show` to display the build history. This allows developers to view recent builds directly from the Makefile without manually running the script.
+    - Add a new phony target `stats` that clears the screen and runs `./scripts/build-history.sh stats` to generate statistics about the build history. This provides a convenient way to see metrics such as build frequency or failure rates.
+    - Declare both `history` and `stats` as phony targets using `.PHONY` to prevent conflicts with files of the same name and to ensure the commands always run.
+    - The new targets are inserted after the existing `version` target to maintain logical grouping of informational commands within the Makefile.
+    - No other Makefile changes were made, so the overall build logic remains unchanged. These additions enhance developer ergonomics by exposing build history functionality directly through `make history` and `make stats`.
+
+commit 79c8eae3605356d224fdda08b9b6002ef13778ec
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:48:24 2025 -0800
+
+    Add build history tracking system to the build pipeline.
+    
+    - Updated Makefile (lines 153–191) to call a new helper script at the start of each build, passing the family, machine, target, and build variant. This records a “start” event for later analysis.
+    - Added calls to the helper script after build completion: on success it logs a “SUCCESS” event with start time and on failure it logs a “FAILED” event, both including the duration. These additions make it possible to audit individual build outcomes and durations directly from the Makefile.
+    - Created a new executable script `scripts/build-history.sh` (mode 755). The script parses arguments for “start” or “end” actions, records timestamps, machine and target details, and writes structured entries into a history log file. It ensures the log directory exists, validates inputs, and handles errors gracefully. This script centralizes history collection so future tooling can read and analyze build results.
+    - Included descriptive comments and a shebang in the new script, and ensured it is part of the repository and executable.
+    
+    These changes collectively enable automated tracking of build attempts, durations, and results for monitoring and diagnostics.
+
+commit 94393a0fe7919ac0cf42e1052931ff02e71845b1
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:47:11 2025 -0800
+
+    Add new boards/raspberry-pi/README.md file to document Raspberry Pi board support in the project.
+    Introduce “Raspberry Pi Board Family” header and explain that the official meta‑raspberrypi BSP layer is used for full support.
+    Create a “Supported Machines” section with a table of latest‑generation boards (raspberrypi5, raspberrypi4‑64, raspberrypi3‑64) listing architecture, CPU, RAM, and performance notes.
+    Add a “Legacy / 32‑bit” table listing older boards (raspberrypi4, raspberrypi3, raspberrypi2, raspberrypi0‑2w‑64) with architecture details and variant notes.
+    Provide a “Compute Modules” table that lists raspberrypi‑cm3 and raspberrypi‑cm with brief module descriptions.
+    Reference the .machines file for the complete machine list, directing users to boards/raspberry-pi/.machines.
+    Add a “Supported Image Targets” section to describe available images.
+    List “Standard Yocto Images” (core‑image‑minimal, core‑image‑base, core‑image‑full‑cmdline, core‑image‑sato, core‑image‑weston) with approximate sizes and intended use.
+    Add “Raspberry Pi BSP Images” (rpi‑test‑image, rpi‑hwup‑image) for hardware testing and bring‑up.
+    Create a “Custom SOC Images” subsection referencing meta‑soc‑rpi with an example rpi‑image‑base entry.
+    Include visual icons (🖥️, 🎯) for readability and section separation.
+    Structure content using Markdown tables and bullet lists for clarity and quick reference.
+
+commit 80f554fe0af2c3432b139a53e1520e9792fa2234
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:46:19 2025 -0800
+
+    Add CONTRIBUTING.md with comprehensive guidelines for contributors
+    
+    Created a new CONTRIBUTING.md file to provide a clear, structured contribution guide.
+    Added a “Ways to Contribute” section listing bug reporting, feature suggestions, documentation, new board families, bug fixes, and build optimization.
+    Included a detailed “Reporting Issues” section that specifies required system info, build configuration, error details, and steps to reproduce to streamline issue triage.
+    Provided a “Development Setup” section with fork/clone instructions, running system checks, and a sample build command for Raspberry Pi 5.
+    Added a “Code Style” area covering Shell Scripts (shellcheck linting, best practices), Makefiles (tabs, comments, .PHONY), and YAML (2‑space indentation, yamllint validation, KAS schema compliance).
+    Included example commands for installing shellcheck, running shellcheck, and yamllint.
+    Added a placeholder “Testing” section to encourage test development.
+    Used emoji headings for quick visual navigation and improved readability.
+    Organized content with Markdown headings, bullet lists, and code fences for clarity.
+    Overall, the file improves onboarding, standardizes contribution practices, and facilitates smoother collaboration.
+
+commit 7063f7c00931829ac8295273f16a0c4522eecd15
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:45:41 2025 -0800
+
+    Add .editorconfig to enforce consistent coding styles across the repository.
+    - Create new .editorconfig file to provide editor-agnostic formatting guidelines.
+    - Set `root = true` so that editors stop searching parent directories for configs.
+    - For all files (`[*]`), enforce UTF‑8 charset, LF line endings, a final newline, trim trailing whitespace, and 2‑space indentation to standardize source layout.
+    - Override shell scripts (`*.{sh,bash}`) to use tabs with width 4, matching typical script conventions.
+    - Configure Makefiles to use tabs with width 4, ensuring proper make syntax.
+    - Apply 2‑space indentation for YAML files (`*.{yml,yaml}`) to align with common YAML formatting practices.
+    - Set Python files (`*.{py,python}`) to use 4‑space indentation, the accepted Python style.
+    - For Markdown files (`*.md`), disable trailing whitespace trimming and use 2‑space indentation to preserve formatting.
+    - Enforce 2‑space indentation for JSON files (`*.json`) for readability.
+    - Set C/C++ header and source files (`*.{c,h,cpp,hpp}`) to 4‑space indentation, matching typical C++ style.
+    - Apply 4‑space indentation for Yocto recipe files (`*.bb`, `*.bbappend`, `*.bbclass`) to maintain consistency across build scripts.
+
+commit 14e6838b4678b63e9c7f524932c5df9a90efa127
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:45:14 2025 -0800
+
+    Added inclusion of .builderrc in Makefile to allow users to override defaults.
+    Introduced new phony target 'doctor' that clears screen, prints diagnostics header, and runs scripts/preflight-check.sh.
+    Introduced new phony target 'preflight' that runs scripts/preflight-check.sh with optional arguments.
+    Created executable scripts/preflight-check.sh to perform comprehensive pre‑build validation.
+    preflight-check.sh sets strict error mode and defines color codes for output.
+    Script defines minimum required Docker version (20.10), disk space (100 GB), RAM (6 GB minimum, 12 GB recommended).
+    Implemented functions to check Docker, disk space, memory, CPU, and network connectivity.
+    Outputs results in color‑coded format, counting errors and warnings.
+    Script prints a header banner and summary before exiting.
+    Makefile changes add these targets to the build system, enabling quick health checks.
+    User can now run 'make doctor' for a full diagnostic or 'make preflight' to validate before a build.
+    All new files are marked executable and the script is added to the repository.
+
+commit 6dc8544ee7c95d96160b896a6eea703058363af3
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:43:44 2025 -0800
+
+    Add new file .builderrc.example – a template configuration for the Builder system.
+    Create file with mode 100644 to provide a baseline for users to copy into .builderrc.
+    Include header comments explaining the file’s purpose, how to copy and edit it, and a usage example.
+    Define BUILD_VARIANT defaulting to release to give developers a clear starting point for symbol and optimization settings.
+    Set BB_NUMBER_THREADS=8 to pre‑configure BitBake parallelism, aiding faster builds while preventing resource exhaustion.
+    Set PARALLEL_MAKE=-j 8 to control make job concurrency, matching the BitBake thread count for balanced CPU usage.
+    Add RM_WORK=1 to enable removal of work directories after build, saving disk space for end users.
+    Provide optional DOCKER_MEMORY and DOCKER_CPUS variables, commented out, so users can limit container resources if needed.
+    Add optional HTTP/HTTPS/FTP proxy variables to accommodate corporate network setups.
+    Include commented SSTATE_MIRRORS variable for remote cache mirroring, improving build speed on shared environments.
+    End file with a placeholder comment to remind maintainers of remaining sections.
+
+commit c082acbbb4ab1508acfe7ba774d1970c447fc4a4
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:42:54 2025 -0800
+
+    Add README.md as the first documentation file for the project.
+    Create title “KAS Board Building System” and include badge links for version and license.
+    Introduce a concise description of the Docker‑based Yocto/OpenEmbedded build system and list supported platforms (Raspberry Pi, Xilinx Zynq, NVIDIA Jetson, NXP i.MX).
+    Add a “Quick Start” section that outlines prerequisites, emphasizing Docker version, Git, Linux host, minimum disk space, and RAM requirements.
+    Provide step‑by‑step shell script snippets for cloning the repo, setting up bash completion, building the first image, and locating artifacts, helping new users get up and running quickly.
+    Include a “Build Variants” subsection with examples for debug, release, and production builds, showing how to specify BUILD_VARIANT.
+    Insert a table of contents linking major sections: Architecture Overview, Supported Platforms, Common Commands, Configuration, Build System, Troubleshooting, Advanced Usage, Contributing.
+    Define the “Architecture Overview” with a brief directory tree view that lists Makefile and boards directory, giving developers an initial mental map of the repository.
+    Set up placeholders for further sections (Supported Platforms, Common Commands, etc.) to guide future expansion of documentation.
+    Use plain text formatting only, avoiding markdown syntax to ensure compatibility with various viewers.
+    Each addition is aimed at improving onboarding, clarity of build steps, and overall project transparency.
+
+commit 4d0624531df31cd4c69290713d15ac24d5d1e7b6
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:36:28 2025 -0800
+
+    Simplified the `build` target by replacing in‑place validation of family, machine and target with a call to the new helper script `./scripts/validate-target.sh`.
+    Removed explicit checks for the existence of `family.yml` and the listing of available families.
+    Eliminated the manual grep against `/.machines` to verify supported machines, now handled by the validation script.
+    Deleted the manual grep against `/.targets` for target support; the script now reports any unsupported values.
+    Updated the `sdk` target similarly: replaced all duplicate validation logic with a single script invocation.
+    Cleaned up unused `yml_file` variable and related code blocks, reducing clutter and potential for divergence.
+    Maintained the same error‑exit behavior; the script exits with status 1 on failure, preserving original control flow.
+    Updated Makefile comments and formatting to reflect the new validation strategy.
+
+commit c388ba1b1b42c7a2da147b58f884fe0a5223b410
+Author: Sandesh Ghimire <sandesh@soccentric.com>
+Date:   Thu Nov 20 18:31:35 2025 -0800
+
+    Add .gitignore file to ignore shared/ directory, preventing local artifacts from being tracked.
+    Introduce a comprehensive Makefile (v2.0.0) that defines core build variables: SHELL, BUILD_DIR, BOARDS_DIR, SOURCES_DIR, ARTIFACTS_DIR, SHARED_DIR, etc.
+    Set default Docker image to master-builder:latest and specify workspace mount path.
+    Add VERSION and TIMESTAMP variables to produce reproducible, time‑stamped build identifiers.
+    Define flexible build configuration options: BUILD_VARIANT (default release), BB_NUMBER_THREADS, PARALLEL_MAKE, and RM_WORK.
+    Create REQUIRED_TOOLS list and CHECK_TOOLS macro to validate presence of docker and git before any build action.
+    Construct a DOCKER_RUN command with network host, volume mount, working directory, user ID mapping, and comprehensive proxy environment handling for HTTP, HTTPS, FTP, and NO_PROXY.
+    Enable .ONESHELL so multi‑line commands execute in a single shell, simplifying complex build steps.
+    Use $(shell pwd) to set GIT_ROOT dynamically, ensuring paths remain correct regardless of invocation location.
+    Implement shared directories for downloads and sstate-cache under shared/, organizing external dependencies and state.
+    Configure parallelism based on processor count, allowing the build to scale with available cores.
+    Provide an RM_WORK flag to automatically clean the build area when set, aiding reproducibility.
+    Structure the Makefile to follow GNU make conventions, ensuring clear output during tool checks.
+    Include placeholders for further Docker run options and build logic (truncated in the diff) to allow future expansion.
+    Overall, this commit adds the essential scaffolding for a reproducible, Docker‑based KAS board build system.

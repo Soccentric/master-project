@@ -1,28 +1,28 @@
-# Dockerfile for SDK environment
+# Dockerfile for eSDK environment
 # Derived from the base master-builder image
 
 ARG BASE_IMAGE=master-builder:latest
 FROM ${BASE_IMAGE}
 
-# Switch to root to install SDK
+# Switch to root to install eSDK
 USER root
 
-# Create directory for SDK installation
-RUN mkdir -p /opt/sdk
+# Create directory for eSDK installation
+RUN mkdir -p /opt/esdk
 
-# Copy SDK installer script
-COPY tmp/sdk-installer.sh /tmp/sdk-installer.sh
+# Copy eSDK installer script
+COPY tmp/esdk-installer.sh /tmp/esdk-installer.sh
 
-# Install SDK if installer exists
-RUN if [ -f /tmp/sdk-installer.sh ]; then \
-    chmod +x /tmp/sdk-installer.sh && \
-    /tmp/sdk-installer.sh -d /opt/sdk -y && \
-    rm -f /tmp/sdk-installer.sh; \
+# Install eSDK if installer exists
+RUN if [ -f /tmp/esdk-installer.sh ]; then \
+    chmod +x /tmp/esdk-installer.sh && \
+    /tmp/esdk-installer.sh -d /opt/esdk -y && \
+    rm -f /tmp/esdk-installer.sh; \
     fi
 
-# Set up SDK environment in user's bashrc
-RUN if [ -d /opt/sdk ]; then \
-    echo 'if [ -f /opt/sdk/environment-setup-* ]; then source /opt/sdk/environment-setup-*; fi' >> /home/yocto/.bashrc; \
+# Set up eSDK environment in user's bashrc
+RUN if [ -d /opt/esdk ]; then \
+    echo 'if [ -f /opt/esdk/environment-setup-* ]; then source /opt/esdk/environment-setup-*; fi' >> /home/yocto/.bashrc; \
     fi
 
 # Switch back to yocto user

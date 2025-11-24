@@ -30,6 +30,16 @@ local_conf_header:
     BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
     PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
     INIT_MANAGER = "sysvinit"
+    INHERIT:remove = "uninative"
+    SDK_EXT_TYPE = "minimal"
+    SDK_INCLUDE_TOOLCHAIN = "1"
+    SDK_INCLUDE_BUILDTOOLS = "1"
+    ERROR_QA:remove = "recipe-qa"
+    SDK_INCLUDE_PKGDATA = "1"
+    SDK_RECRDEP_TASKS = ""
+    SDK_LOCAL_CONF_ALLOWLIST = ""
+    BBMASK += "meta-qt5/recipes-qt/qsiv/"
+
   build_variant: |
     # Build variant configuration
     BUILD_VARIANT = "${@os.getenv('BUILD_VARIANT', 'release')}"

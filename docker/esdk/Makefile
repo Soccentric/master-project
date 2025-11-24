@@ -1,5 +1,5 @@
-# Makefile for building SDK Docker images
-# This builds a Docker image with the Yocto SDK installed
+# Makefile for building eSDK Docker images
+# This builds a Docker image with the Yocto eSDK installed
 
 # Default values (can be overridden)
 BASE_IMAGE ?= master-builder:latest
@@ -12,20 +12,20 @@ TAG ?= latest
 build:
 	@if [ -z "$(SDK_FILE)" ]; then \
 		echo "Error: SDK_FILE must be specified"; \
-		echo "Usage: make build SDK_FILE=<path-to-sdk.sh> MACHINE_FAMILY=<family>"; \
+		echo "Usage: make build SDK_FILE=<path-to-esdk.sh> MACHINE_FAMILY=<family>"; \
 		exit 1; \
 	fi; \
 	if [ ! -f "$(SDK_FILE)" ]; then \
-		echo "Error: SDK file not found: $(SDK_FILE)"; \
+		echo "Error: eSDK file not found: $(SDK_FILE)"; \
 		exit 1; \
 	fi; \
-	@echo "Building SDK Docker image..."; \
+	@echo "Building eSDK Docker image..."; \
 	echo "  Base Image:      $(BASE_IMAGE)"; \
 	echo "  Machine Family:  $(MACHINE_FAMILY)"; \
-	echo "  SDK File:        $(SDK_FILE)"; \
+	echo "  eSDK File:       $(SDK_FILE)"; \
 	echo "  Image Name:      $(IMAGE_NAME):$(TAG)"; \
 	mkdir -p tmp && \
-	cp "$(SDK_FILE)" tmp/sdk-installer.sh && \
+	cp "$(SDK_FILE)" tmp/esdk-installer.sh && \
 	docker build \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		-t $(IMAGE_NAME):$(TAG) \
@@ -44,18 +44,18 @@ clean:
 
 .PHONY: help
 help:
-	@echo "SDK Docker Image Builder"
+	@echo "eSDK Docker Image Builder"
 	@echo ""
 	@echo "Targets:"
-	@echo "  build          - Build SDK Docker image"
-	@echo "  run            - Run SDK Docker image interactively"
-	@echo "  clean          - Remove SDK Docker image"
+	@echo "  build          - Build eSDK Docker image"
+	@echo "  run            - Run eSDK Docker image interactively"
+	@echo "  clean          - Remove eSDK Docker image"
 	@echo ""
 	@echo "Variables:"
-	@echo "  SDK_FILE       - Path to SDK installer script (required)"
+	@echo "  SDK_FILE       - Path to eSDK installer script (required)"
 	@echo "  MACHINE_FAMILY - Machine family name (required)"
 	@echo "  BASE_IMAGE     - Base Docker image (default: master-builder:latest)"
 	@echo "  TAG            - Image tag (default: latest)"
 	@echo ""
 	@echo "Example:"
-	@echo "  make build SDK_FILE=/path/to/sdk.sh MACHINE_FAMILY=raspberry-pi"
+	@echo "  make build SDK_FILE=/path/to/esdk.sh MACHINE_FAMILY=raspberry-pi"
