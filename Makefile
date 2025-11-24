@@ -110,11 +110,19 @@ prerequisites:
 doctor:
 	@clear; echo -e "$(COLOR_BLUE)Running comprehensive system diagnostics...$(COLOR_RESET)"
 	@echo ""
-	@./scripts/preflight-check.sh
+	@if [ ! -x "./scripts/preflight-check.sh" ]; then \
+		echo -e "$(COLOR_RED)Error: preflight-check.sh not found or not executable$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	./scripts/preflight-check.sh
 
 .PHONY: preflight
 preflight:
-	@./scripts/preflight-check.sh "$${args[@]}"
+	@if [ ! -x "./scripts/preflight-check.sh" ]; then \
+		echo -e "$(COLOR_RED)Error: preflight-check.sh not found or not executable$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	./scripts/preflight-check.sh "$${args[@]}"
 
 # ==============================================================================
 # Build targets
@@ -126,6 +134,10 @@ build: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
+		if [ ! -x "./scripts/validate-target.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: validate-target.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
@@ -150,10 +162,15 @@ build: prerequisites docker-build
 		fi; \
 		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
 		board_sstate_dir="$$board_build_dir/sstate-cache"; \
-		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		temp_yml="/tmp/kas-$$family-$$machine-$$$$-$(TIMESTAMP).yml"; \
+		trap 'rm -f "$$temp_yml"' EXIT INT TERM; \
 		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
+		if [ ! -x "./scripts/build-history.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: build-history.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		./scripts/build-history.sh start "$$family" "$$machine" "$$target" "$(BUILD_VARIANT)"; \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting build$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Family:  $$family$(COLOR_RESET)"; \
@@ -163,10 +180,10 @@ build: prerequisites docker-build
 		echo -e "$(COLOR_BLUE)  Variant: $(BUILD_VARIANT)$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Threads: $(BB_NUMBER_THREADS) (BB_NUMBER_THREADS), $(PARALLEL_MAKE) (PARALLEL_MAKE)$(COLOR_RESET)"; \
 		echo -e "$(COLOR_GREEN)Creating build directory: $$board_build_dir$(COLOR_RESET)"; \
-		mkdir -p "$$board_build_dir"/{tmp,cache,conf,conf/multiconfig}; \
+		mkdir -p "$$board_build_dir"/{tmp,cache,conf,conf/multiconfig} || { echo -e "$(COLOR_RED)Error: Failed to create build directory$(COLOR_RESET)"; exit 1; }; \
 		touch "$$board_build_dir/conf/multiconfig/.conf"; \
 		echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
-		mkdir -p "$$board_sources_dir"; \
+		mkdir -p "$$board_sources_dir" || { echo -e "$(COLOR_RED)Error: Failed to create sources directory$(COLOR_RESET)"; exit 1; }; \
 		echo -e "$(COLOR_GREEN)Using shared caches:$(COLOR_RESET)"; \
 		echo -e "  Downloads: $$board_dl_dir (per board)"; \
 		echo -e "  SSTATE:    $$board_sstate_dir (per build)"; \
@@ -223,6 +240,10 @@ sdk: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
+		if [ ! -x "./scripts/validate-target.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: validate-target.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
@@ -247,7 +268,8 @@ sdk: prerequisites docker-build
 		fi; \
 		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
 		board_sstate_dir="$$board_build_dir/sstate-cache"; \
-		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		temp_yml="/tmp/kas-$$family-$$machine-$$$$-$(TIMESTAMP).yml"; \
+		trap 'rm -f "$$temp_yml"' EXIT INT TERM; \
 		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
@@ -315,6 +337,10 @@ shell: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
+		if [ ! -x "./scripts/validate-target.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: validate-target.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
@@ -337,7 +363,8 @@ shell: prerequisites docker-build
 		fi; \
 		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
 		board_sstate_dir="$$board_build_dir/sstate-cache"; \
-		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		temp_yml="/tmp/kas-$$family-$$machine-$$$$-$(TIMESTAMP).yml"; \
+		trap 'rm -f "$$temp_yml"' EXIT INT TERM; \
 		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting interactive shell$(COLOR_RESET)"; \
@@ -379,6 +406,10 @@ esdk: prerequisites docker-build
 		family="$${args[0]}"; \
 		machine="$${args[1]}"; \
 		target="$${args[2]}"; \
+		if [ ! -x "./scripts/validate-target.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: validate-target.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		if ! ./scripts/validate-target.sh "$$family" "$$machine" "$$target"; then \
 			exit 1; \
 		fi; \
@@ -392,7 +423,8 @@ esdk: prerequisites docker-build
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
 		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
 		board_sstate_dir="$$board_build_dir/sstate-cache"; \
-		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		temp_yml="/tmp/kas-$$family-$$machine-$$$$-$(TIMESTAMP).yml"; \
+		trap 'rm -f "$$temp_yml"' EXIT INT TERM; \
 		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
@@ -565,17 +597,29 @@ version:
 
 .PHONY: history
 history:
-	@clear; ./scripts/build-history.sh show
+	@clear; if [ ! -x "./scripts/build-history.sh" ]; then \
+		echo -e "$(COLOR_RED)Error: build-history.sh not found or not executable$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	./scripts/build-history.sh show
 
 .PHONY: stats
 stats:
-	@clear; ./scripts/build-history.sh stats
+	@clear; if [ ! -x "./scripts/build-history.sh" ]; then \
+		echo -e "$(COLOR_RED)Error: build-history.sh not found or not executable$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	./scripts/build-history.sh stats
 
 .PHONY: why-failed
 why-failed:
 	@clear; args=($(filter-out $@,$(MAKECMDGOALS))); \
 	if [ $${#args[@]} -eq 1 ]; then \
 		build_name="$${args[0]}"; \
+		if [ ! -x "./scripts/analyze-errors.sh" ]; then \
+			echo -e "$(COLOR_RED)Error: analyze-errors.sh not found or not executable$(COLOR_RESET)"; \
+			exit 1; \
+		fi; \
 		./scripts/analyze-errors.sh "$$build_name"; \
 	else \
 		echo -e "$(COLOR_YELLOW)Error: Invalid arguments$(COLOR_RESET)"; \
@@ -687,7 +731,7 @@ clean-sstate-family:
 		echo; \
 		if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
 			echo -e "$(COLOR_YELLOW)Removing sstate for $$family...$(COLOR_RESET)"; \
-			rm -rf $(BUILD_DIR)/$$family-*/sstate-cache; \
+			rm -rf "$(BUILD_DIR)/$$family-"*/sstate-cache; \
 			echo -e "$(COLOR_GREEN)✓ Sstate for $$family removed$(COLOR_RESET)"; \
 		else \
 			echo "Cancelled"; \
@@ -695,10 +739,6 @@ clean-sstate-family:
 	else \
 		echo -e "$(COLOR_RED)Usage: make clean-sstate-family <family>$(COLOR_RESET)"; \
 		echo -e "Example: make clean-sstate-family raspberry-pi"; \
-	fi
-		echo -e "$(COLOR_YELLOW)Error: Invalid arguments$(COLOR_RESET)"; \
-		echo "Usage: make clean-sstate-family <family>"; \
-		echo "Example: make clean-sstate-family raspberry-pi"; \
 		exit 1; \
 	fi
 
@@ -812,7 +852,15 @@ config:
 # ==============================================================================
 .PHONY: docker-build
 docker-build:
-	@clear; if docker images -q $(DOCKER_IMAGE) | grep -q .; then \
+	@clear; if ! command -v docker >/dev/null 2>&1; then \
+		echo -e "$(COLOR_RED)Error: Docker is not installed or not in PATH$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	if ! docker info >/dev/null 2>&1; then \
+		echo -e "$(COLOR_RED)Error: Docker daemon is not running$(COLOR_RESET)"; \
+		exit 1; \
+	fi; \
+	if docker images -q $(DOCKER_IMAGE) 2>/dev/null | grep -q .; then \
 		echo -e "$(COLOR_GREEN)✓ Docker image $(DOCKER_IMAGE) already exists, skipping build$(COLOR_RESET)"; \
 	else \
 		start_time=$$(date +%s); \
@@ -842,6 +890,8 @@ docker-run:
 
 # ==============================================================================
 # Catch-all target for board names (prevents "No rule to make target" errors)
+# Note: This silently accepts unknown arguments for dynamic target handling.
+# If you get unexpected behavior, verify your target name is correct.
 # ==============================================================================
 %:
 	@:
