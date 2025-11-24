@@ -148,9 +148,10 @@ build: prerequisites docker-build
 			echo -e "$(COLOR_YELLOW)Warning: Architecture map not found, defaulting to aarch64$(COLOR_RESET)"; \
 			arch="aarch64"; \
 		fi; \
-		board_sstate_dir="$(SHARED_SSTATE_BASE_DIR)/$$family-$$arch"; \
+		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
+		board_sstate_dir="$$board_build_dir/sstate-cache"; \
 		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
-		mkdir -p "$(SHARED_DL_DIR)" "$$board_sstate_dir"; \
+		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
 		./scripts/build-history.sh start "$$family" "$$machine" "$$target" "$(BUILD_VARIANT)"; \
@@ -167,8 +168,8 @@ build: prerequisites docker-build
 		echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 		mkdir -p "$$board_sources_dir"; \
 		echo -e "$(COLOR_GREEN)Using shared caches:$(COLOR_RESET)"; \
-		echo -e "  Downloads: $(SHARED_DL_DIR)"; \
-		echo -e "  SSTATE:    $$board_sstate_dir ($$family/$$arch)"; \
+		echo -e "  Downloads: $$board_dl_dir (per board)"; \
+		echo -e "  SSTATE:    $$board_sstate_dir (per build)"; \
 		echo -e "$(COLOR_GREEN)Starting KAS build...$(COLOR_RESET)"; \
 		if $(DOCKER_RUN) \
 			-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
@@ -176,7 +177,7 @@ build: prerequisites docker-build
 			-e BB_NUMBER_THREADS=$(BB_NUMBER_THREADS) \
 			-e "PARALLEL_MAKE=$(PARALLEL_MAKE)" \
 			-e RM_WORK=$(RM_WORK) \
-			-e DL_DIR=$(WORKSPACE_MOUNT)/$(SHARED_DL_DIR) \
+			-e DL_DIR=$(WORKSPACE_MOUNT)/$$board_dl_dir \
 			-e SSTATE_DIR=$(WORKSPACE_MOUNT)/$$board_sstate_dir \
 			-v "$$temp_yml:$(WORKSPACE_MOUNT)/.kas-temp.yml:ro" \
 			$(DOCKER_IMAGE) \
@@ -233,20 +234,40 @@ sdk: prerequisites docker-build
 		build_name="$$family-$$machine"; \
 		board_build_dir="$(BUILD_DIR)/$$build_name"; \
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
+		arch_map_file="$(BOARDS_DIR)/$$family/.arch-map"; \
+		if [ -f "$$arch_map_file" ]; then \
+			arch=$$(grep "^$$machine:" "$$arch_map_file" | cut -d: -f2); \
+			if [ -z "$$arch" ]; then \
+				echo -e "$(COLOR_YELLOW)Warning: Architecture not found for $$machine, defaulting to aarch64$(COLOR_RESET)"; \
+				arch="aarch64"; \
+			fi; \
+		else \
+			echo -e "$(COLOR_YELLOW)Warning: Architecture map not found, defaulting to aarch64$(COLOR_RESET)"; \
+			arch="aarch64"; \
+		fi; \
+		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
+		board_sstate_dir="$$board_build_dir/sstate-cache"; \
 		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting SDK build$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Family:  $$family$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Machine: $$machine$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Target:  $$target$(COLOR_RESET)"; \
+		echo -e "$(COLOR_BLUE)  Arch:    $$arch$(COLOR_RESET)"; \
 		echo -e "$(COLOR_GREEN)Creating build directory: $$board_build_dir$(COLOR_RESET)"; \
 		mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 		echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 		mkdir -p "$$board_sources_dir"; \
+		echo -e "$(COLOR_GREEN)Using shared caches:$(COLOR_RESET)"; \
+		echo -e "  Downloads: $$board_dl_dir (per board)"; \
+		echo -e "  SSTATE:    $$board_sstate_dir (per build)"; \
 		echo -e "$(COLOR_GREEN)Starting SDK build...$(COLOR_RESET)"; \
 		if $(DOCKER_RUN) \
 			-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
+			-e DL_DIR=$(WORKSPACE_MOUNT)/$$board_dl_dir \
+			-e SSTATE_DIR=$(WORKSPACE_MOUNT)/$$board_sstate_dir \
 			-v "$$temp_yml:$(WORKSPACE_MOUNT)/.kas-temp.yml:ro" \
 			$(DOCKER_IMAGE) \
 			kas build -c populate_sdk $(WORKSPACE_MOUNT)/.kas-temp.yml; then \
@@ -314,9 +335,10 @@ shell: prerequisites docker-build
 		else \
 			arch="aarch64"; \
 		fi; \
-		board_sstate_dir="$(SHARED_SSTATE_BASE_DIR)/$$family-$$arch"; \
+		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
+		board_sstate_dir="$$board_build_dir/sstate-cache"; \
 		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
-		mkdir -p "$(SHARED_DL_DIR)" "$$board_sstate_dir"; \
+		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting interactive shell$(COLOR_RESET)"; \
 		echo -e "$(COLOR_BLUE)  Family:  $$family$(COLOR_RESET)"; \
@@ -328,8 +350,8 @@ shell: prerequisites docker-build
 		echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 		mkdir -p "$$board_sources_dir"; \
 		echo -e "$(COLOR_GREEN)Using shared caches:$(COLOR_RESET)"; \
-		echo -e "  Downloads: $(SHARED_DL_DIR)"; \
-		echo -e "  SSTATE:    $$board_sstate_dir ($$family/$$arch)"; \
+		echo -e "  Downloads: $$board_dl_dir (per board)"; \
+		echo -e "  SSTATE:    $$board_sstate_dir (per build)"; \
 		echo -e "$(COLOR_GREEN)Starting KAS shell...$(COLOR_RESET)"; \
 		$(DOCKER_RUN) -it \
 			-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
@@ -337,7 +359,7 @@ shell: prerequisites docker-build
 			-e BB_NUMBER_THREADS=$(BB_NUMBER_THREADS) \
 			-e "PARALLEL_MAKE=$(PARALLEL_MAKE)" \
 			-e RM_WORK=$(RM_WORK) \
-			-e DL_DIR=$(WORKSPACE_MOUNT)/$(SHARED_DL_DIR) \
+			-e DL_DIR=$(WORKSPACE_MOUNT)/$$board_dl_dir \
 			-e SSTATE_DIR=$(WORKSPACE_MOUNT)/$$board_sstate_dir \
 			-v "$$temp_yml:$(WORKSPACE_MOUNT)/.kas-temp.yml:ro" \
 			$(DOCKER_IMAGE) \
@@ -368,7 +390,10 @@ esdk: prerequisites docker-build
 		build_name="$$family-$$machine"; \
 		board_build_dir="$(BUILD_DIR)/$$build_name"; \
 		board_sources_dir="$(SOURCES_DIR)/$$family"; \
+		board_dl_dir="$(SHARED_DIR)/downloads/$$family"; \
+		board_sstate_dir="$$board_build_dir/sstate-cache"; \
 		temp_yml="/tmp/kas-$$family-$$machine-$$$$.yml"; \
+		mkdir -p "$$board_dl_dir" "$$board_sstate_dir"; \
 		sed -e "s/__MACHINE__/$$machine/g" -e "s/__TARGET__/$$target/g" "$$yml_file" > "$$temp_yml"; \
 		start_time=$$(date +%s); \
 		echo -e "$(COLOR_BLUE)[$$(date +%Y%m%d_%H%M%S)] Starting eSDK build$(COLOR_RESET)"; \
@@ -379,9 +404,14 @@ esdk: prerequisites docker-build
 		mkdir -p "$$board_build_dir"/{tmp,cache,conf}; \
 		echo -e "$(COLOR_GREEN)Creating sources directory: $$board_sources_dir$(COLOR_RESET)"; \
 		mkdir -p "$$board_sources_dir"; \
+		echo -e "$(COLOR_GREEN)Using shared caches:$(COLOR_RESET)"; \
+		echo -e "  Downloads: $$board_dl_dir (per board)"; \
+		echo -e "  SSTATE:    $$board_sstate_dir (per build)"; \
 		echo -e "$(COLOR_GREEN)Starting eSDK build...$(COLOR_RESET)"; \
 		if $(DOCKER_RUN) \
 			-e KAS_BUILD_DIR=$(WORKSPACE_MOUNT)/$$board_build_dir \
+			-e DL_DIR=$(WORKSPACE_MOUNT)/$$board_dl_dir \
+			-e SSTATE_DIR=$(WORKSPACE_MOUNT)/$$board_sstate_dir \
 			-v "$$temp_yml:$(WORKSPACE_MOUNT)/.kas-temp.yml:ro" \
 			$(DOCKER_IMAGE) \
 			kas build -c populate_sdk_ext $(WORKSPACE_MOUNT)/.kas-temp.yml; then \
@@ -469,8 +499,8 @@ info:
 	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Boards Directory:" "$(BOARDS_DIR)"
 	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Sources Directory:" "$(SOURCES_DIR)"
 	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Artifacts Directory:" "$(ARTIFACTS_DIR)"
-	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Shared DL Dir:" "$(SHARED_DL_DIR)"
-	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE Base Dir:" "$(SHARED_SSTATE_BASE_DIR) (family-arch-specific subdirs)"
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Shared DL Dir:" "$(SHARED_DIR)/downloads (per board family)"
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE Dir:" "build/*/sstate-cache (per build)"
 	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Docker Image:" "$(DOCKER_IMAGE)"
 	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Workspace Mount:" "$(WORKSPACE_MOUNT)"
 	@echo ""
@@ -481,24 +511,33 @@ info:
 	@printf "$(COLOR_YELLOW)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "PARALLEL_MAKE:" "$(PARALLEL_MAKE)"
 	@printf "$(COLOR_YELLOW)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "RM_WORK:" "$(RM_WORK)"
 	@echo ""
-	@echo -e "$(COLOR_BOLD)Shared Cache Usage:$(COLOR_RESET)"
+	@echo -e "$(COLOR_BOLD)Cache Usage:$(COLOR_RESET)"
 	@echo ""
-	@if [ -d "$(SHARED_DL_DIR)" ]; then \
-		dl_size=$$(du -sh "$(SHARED_DL_DIR)" 2>/dev/null | cut -f1); \
-		printf "$(COLOR_GREEN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Downloads:" "$$dl_size"; \
+	@if [ -d "$(SHARED_DIR)/downloads" ]; then \
+		total_dl_size=$$(du -sh "$(SHARED_DIR)/downloads" 2>/dev/null | cut -f1); \
+		printf "$(COLOR_GREEN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Downloads (total):" "$$total_dl_size"; \
+		for board_dir in $(SHARED_DIR)/downloads/*; do \
+			if [ -d "$$board_dir" ]; then \
+				board_name=$$(basename "$$board_dir"); \
+				board_size=$$(du -sh "$$board_dir" 2>/dev/null | cut -f1); \
+				printf "$(COLOR_BLUE)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "  $$board_name:" "$$board_size"; \
+			fi; \
+		done; \
 	else \
 		printf "$(COLOR_RED)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "Downloads:" "Not initialized"; \
 	fi
-	@if [ -d "$(SHARED_SSTATE_BASE_DIR)" ]; then \
-		sstate_size=$$(du -sh "$(SHARED_SSTATE_BASE_DIR)" 2>/dev/null | cut -f1); \
-		printf "$(COLOR_GREEN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE:" "$$sstate_size (all families)"; \
-		for family_dir in $(SHARED_SSTATE_BASE_DIR)/*; do \
-			if [ -d "$$family_dir" ]; then \
-				family_name=$$(basename "$$family_dir"); \
-				family_size=$$(du -sh "$$family_dir" 2>/dev/null | cut -f1); \
-				printf "$(COLOR_BLUE)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "  $$family_name:" "$$family_size"; \
-			fi; \
-		done; \
+	@if [ -d "$(BUILD_DIR)" ]; then \
+		sstate_dirs=$$(find $(BUILD_DIR) -name sstate-cache -type d 2>/dev/null); \
+		if [ -n "$$sstate_dirs" ]; then \
+			printf "$(COLOR_GREEN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE:" "Per build"; \
+			find $(BUILD_DIR) -name sstate-cache -type d | while read sstate_dir; do \
+				build_name=$$(basename $$(dirname "$$sstate_dir")); \
+				sstate_size=$$(du -sh "$$sstate_dir" 2>/dev/null | cut -f1); \
+				printf "$(COLOR_BLUE)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "  $$build_name:" "$$sstate_size"; \
+			done; \
+		else \
+			printf "$(COLOR_RED)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE:" "Not initialized"; \
+		fi; \
 	else \
 		printf "$(COLOR_RED)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE:" "Not initialized"; \
 	fi
@@ -614,26 +653,26 @@ clean-shared: clean-downloads clean-sstate
 
 .PHONY: clean-downloads
 clean-downloads:
-	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove the shared downloads cache$(COLOR_RESET)"
+	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove all per-board downloads caches$(COLOR_RESET)"
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo -e "$(COLOR_YELLOW)Removing shared downloads...$(COLOR_RESET)"; \
-		rm -rf $(SHARED_DL_DIR); \
-		echo -e "$(COLOR_GREEN)✓ Shared downloads removed$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Removing per-board downloads...$(COLOR_RESET)"; \
+		rm -rf $(SHARED_DIR)/downloads/*; \
+		echo -e "$(COLOR_GREEN)✓ Per-board downloads removed$(COLOR_RESET)"; \
 	else \
 		echo "Cancelled"; \
 	fi
 
 .PHONY: clean-sstate
 clean-sstate:
-	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove the shared sstate cache (all families)$(COLOR_RESET)"
+	@clear; echo -e "$(COLOR_YELLOW)Warning: This will remove all per-build sstate caches$(COLOR_RESET)"
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo -e "$(COLOR_YELLOW)Removing shared sstate...$(COLOR_RESET)"; \
-		rm -rf $(SHARED_SSTATE_BASE_DIR); \
-		echo -e "$(COLOR_GREEN)✓ Shared sstate removed$(COLOR_RESET)"; \
+		echo -e "$(COLOR_YELLOW)Removing per-build sstate...$(COLOR_RESET)"; \
+		rm -rf $(BUILD_DIR)/*/sstate-cache; \
+		echo -e "$(COLOR_GREEN)✓ Per-build sstate removed$(COLOR_RESET)"; \
 	else \
 		echo "Cancelled"; \
 	fi
@@ -643,22 +682,20 @@ clean-sstate-family:
 	@clear; args=($(filter-out $@,$(MAKECMDGOALS))); \
 	if [ $${#args[@]} -eq 1 ]; then \
 		family="$${args[0]}"; \
-		family_sstate_dir="$(SHARED_SSTATE_BASE_DIR)/$$family"; \
-		if [ -d "$$family_sstate_dir" ]; then \
-			echo -e "$(COLOR_YELLOW)Warning: This will remove sstate cache for $$family$(COLOR_RESET)"; \
-			read -p "Are you sure? [y/N] " -n 1 -r; \
-			echo; \
-			if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-				echo -e "$(COLOR_YELLOW)Removing $$family sstate cache...$(COLOR_RESET)"; \
-				rm -rf "$$family_sstate_dir"; \
-				echo -e "$(COLOR_GREEN)✓ SSTATE cache for $$family removed$(COLOR_RESET)"; \
-			else \
-				echo "Cancelled"; \
-			fi; \
+		echo -e "$(COLOR_YELLOW)Warning: This will remove sstate cache for all $$family builds$(COLOR_RESET)"; \
+		read -p "Are you sure? [y/N] " -n 1 -r; \
+		echo; \
+		if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+			echo -e "$(COLOR_YELLOW)Removing sstate for $$family...$(COLOR_RESET)"; \
+			rm -rf $(BUILD_DIR)/$$family-*/sstate-cache; \
+			echo -e "$(COLOR_GREEN)✓ Sstate for $$family removed$(COLOR_RESET)"; \
 		else \
-			echo -e "$(COLOR_YELLOW)No sstate cache found for $$family$(COLOR_RESET)"; \
+			echo "Cancelled"; \
 		fi; \
 	else \
+		echo -e "$(COLOR_RED)Usage: make clean-sstate-family <family>$(COLOR_RESET)"; \
+		echo -e "Example: make clean-sstate-family raspberry-pi"; \
+	fi
 		echo -e "$(COLOR_YELLOW)Error: Invalid arguments$(COLOR_RESET)"; \
 		echo "Usage: make clean-sstate-family <family>"; \
 		echo "Example: make clean-sstate-family raspberry-pi"; \
@@ -759,19 +796,8 @@ config:
 	@echo ""
 	@echo -e "$(COLOR_BOLD)Cache Directories:$(COLOR_RESET)"
 	@echo ""
-	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "DL_DIR =" "$(SHARED_DL_DIR) (shared across all families)"
-	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE_BASE_DIR =" "$(SHARED_SSTATE_BASE_DIR) (family-arch-specific subdirs)"
-	@echo -e "  $(COLOR_WHITE)SSTATE structure:$(COLOR_RESET)"
-	@if [ -d "$(SHARED_SSTATE_BASE_DIR)" ]; then \
-		for family_dir in $(SHARED_SSTATE_BASE_DIR)/*; do \
-			if [ -d "$$family_dir" ]; then \
-				family_name=$$(basename "$$family_dir"); \
-				echo -e "    $(COLOR_BLUE)$$family_name$(COLOR_RESET): $(SHARED_SSTATE_BASE_DIR)/$$family_name"; \
-			fi; \
-		done; \
-	else \
-		echo "    $(COLOR_RED)(not yet initialized)$(COLOR_RESET)"; \
-	fi
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "DL_DIR =" "shared/downloads/<family> (per board family)"
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "SSTATE_DIR =" "build/<family>-<machine>/sstate-cache (per build)"
 	@echo ""
 	@echo -e "$(COLOR_BOLD)Usage Examples:$(COLOR_RESET)"
 	@echo -e "  $(COLOR_WHITE)make build raspberry-pi raspberrypi5 core-image-base BUILD_VARIANT=debug$(COLOR_RESET)"
