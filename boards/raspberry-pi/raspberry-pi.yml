@@ -41,10 +41,6 @@ repos:
       meta-networking:
       meta-perl:
 
-  meta-qt5:
-    url: https://github.com/soc-rpi-oss/meta-qt5
-    path: sources/raspberry-pi/meta-qt5
-
   meta-soc-rpi:
     url: https://github.com/soccentric/meta-soc-rpi
     branch: soc-rel-v2025.4
