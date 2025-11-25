@@ -66,4 +66,6 @@ repos:
 local_conf_header:
   add_user: |
     EXTRA_USERS_PARAMS = "useradd -m -p '' jetson; usermod -a -G sudo jetson;"
+  virtualization: |
+    DISTRO_FEATURES:append = " virtualization"
 
