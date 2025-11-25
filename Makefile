@@ -42,6 +42,7 @@ endef
 
 # Docker run base command
 DOCKER_RUN := docker run --rm --network host \
+	--tty \
 	-v $(GIT_ROOT):$(WORKSPACE_MOUNT) \
 	-w $(WORKSPACE_MOUNT) \
 	--user $(shell id -u):$(shell id -g) \
