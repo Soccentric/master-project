@@ -44,6 +44,7 @@ imx8ulp-lpddr4-evk:aarch64
 # i.MX9 Series (64-bit)
 imx93-11x11-lpddr4x-evk:aarch64
 imx93-9x9-lpddr4-qsb:aarch64
+imx93frdm:aarch64
 
 # Layerscape LS1 Series (64-bit)
 ls1012afrwy:aarch64

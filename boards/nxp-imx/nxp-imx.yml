@@ -73,12 +73,20 @@ repos:
   meta-imx-frdm:
     url: https://github.com/soc-imx-oss/meta-imx-frdm
     path: sources/nxp-imx/meta-imx-frdm
+    layers:
+      meta-imx-bsp: 
+      meta-imx-sdk:
+      meta-nxp-connectivity:
+      meta-nxp-demo-experience:
+
   meta-imx-fastboot:
     url: https://github.com/soc-imx-oss/meta-imx-fastboot
     path: sources/nxp-imx/meta-imx-fastboot
   meta-nxp-security-reference-design:
     url: https://github.com/soc-imx-oss/meta-nxp-security-reference-design
     path: sources/nxp-imx/meta-nxp-security-reference-design
+    layers:
+      meta-secure-boot: null
   meta-nxp-easyevse-mpu:
     url: https://github.com/soc-imx-oss/meta-nxp-easyevse-mpu
     path: sources/nxp-imx/meta-nxp-easyevse-mpu
@@ -103,9 +111,6 @@ repos:
   meta-eiq-heterogenous:
     url: https://github.com/soc-imx-oss/meta-eiq-heterogenous
     path: sources/nxp-imx/meta-eiq-heterogenous
-  meta-avs-demos:
-    url: https://github.com/soc-imx-oss/meta-avs-demos
-    path: sources/nxp-imx/meta-avs-demos
 
 local_conf_header:
   custom-local-conf: |

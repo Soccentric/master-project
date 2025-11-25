@@ -44,6 +44,7 @@ imx8ulp-lpddr4-evk
 # i.MX9 Series
 imx93-11x11-lpddr4x-evk
 imx93-9x9-lpddr4-qsb
+imx93frdm
 
 # Layerscape (LS) Series
 ls1012afrwy
