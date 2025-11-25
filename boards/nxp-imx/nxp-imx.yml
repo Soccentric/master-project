@@ -53,23 +53,59 @@ repos:
 
   meta-freescale:
     url: https://github.com/soc-imx-oss/meta-freescale
-
     path: sources/nxp-imx/meta-freescale
 
   meta-freescale-3rdparty:
     url: https://github.com/soc-imx-oss/meta-freescale-3rdparty
-
     path: sources/nxp-imx/meta-freescale-3rdparty
 
   meta-freescale-distro:
     url: https://github.com/soc-imx-oss/meta-freescale-distro
-
     path: sources/nxp-imx/meta-freescale-distro
 
   meta-soc-imx:
     url: https://github.com/soccentric/meta-soc-imx
-
     path: sources/nxp-imx/meta-soc-imx
+
+  meta-nxp-demo-experience:
+    url: https://github.com/soc-imx-oss/meta-nxp-demo-experience
+    path: sources/nxp-imx/meta-nxp-demo-experience
+  meta-imx-frdm:
+    url: https://github.com/soc-imx-oss/meta-imx-frdm
+    path: sources/nxp-imx/meta-imx-frdm
+  meta-imx-fastboot:
+    url: https://github.com/soc-imx-oss/meta-imx-fastboot
+    path: sources/nxp-imx/meta-imx-fastboot
+  meta-nxp-security-reference-design:
+    url: https://github.com/soc-imx-oss/meta-nxp-security-reference-design
+    path: sources/nxp-imx/meta-nxp-security-reference-design
+  meta-nxp-easyevse-mpu:
+    url: https://github.com/soc-imx-oss/meta-nxp-easyevse-mpu
+    path: sources/nxp-imx/meta-nxp-easyevse-mpu
+  meta-smart-appliance:
+    url: https://github.com/soc-imx-oss/meta-smart-appliance
+    path: sources/nxp-imx/meta-smart-appliance
+  meta-imx8mp-isp-ar0144:
+    url: https://github.com/soc-imx-oss/meta-imx8mp-isp-ar0144
+    path: sources/nxp-imx/meta-imx8mp-isp-ar0144
+  meta-imx8mp-isp-imx219:
+    url: https://github.com/soc-imx-oss/meta-imx8mp-isp-imx219
+    path: sources/nxp-imx/meta-imx8mp-isp-imx219
+  meta-swupdate-imx:
+    url: https://github.com/soc-imx-oss/meta-swupdate-imx
+    path: sources/nxp-imx/meta-swupdate-imx
+  meta-imx8mp-isp-ov5647:
+    url: https://github.com/soc-imx-oss/meta-imx8mp-isp-ov5647
+    path: sources/nxp-imx/meta-imx8mp-isp-ov5647
+  meta-robot-platform:
+    url: https://github.com/soc-imx-oss/meta-robot-platform
+    path: sources/nxp-imx/meta-robot-platform
+  meta-eiq-heterogenous:
+    url: https://github.com/soc-imx-oss/meta-eiq-heterogenous
+    path: sources/nxp-imx/meta-eiq-heterogenous
+  meta-avs-demos:
+    url: https://github.com/soc-imx-oss/meta-avs-demos
+    path: sources/nxp-imx/meta-avs-demos
 
 local_conf_header:
   custom-local-conf: |
