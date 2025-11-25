@@ -38,8 +38,6 @@ local_conf_header:
     SDK_INCLUDE_PKGDATA = "1"
     SDK_RECRDEP_TASKS = ""
     SDK_LOCAL_CONF_ALLOWLIST = ""
-    BBMASK += "meta-qt5/recipes-qt/qsiv/"
-    ASSUME_PROVIDED += "cmake-native"
 
   build_variant: |
     # Build variant configuration
