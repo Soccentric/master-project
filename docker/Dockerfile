@@ -40,6 +40,7 @@ RUN apt-get update && apt-get install -y \
     libncurses5-dev \
     libtinfo5 \
     file \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # Set locale
