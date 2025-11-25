@@ -18,7 +18,7 @@ artifacts/
 /tmp/
 
 # Editor backups
-*~
+
 *.swp
 *.swo
 .*.sw?
