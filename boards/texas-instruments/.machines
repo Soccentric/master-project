@@ -1,0 +1,38 @@
+# Supported Texas Instruments Machines
+# Format: one machine name per line
+# Lines starting with # are comments
+
+# AM62x Family (Cortex-A53)
+am62xx-evm
+am62xx-lp-evm
+am62pxx-evm
+am62axx-evm
+
+# AM64x Family (Cortex-A53)
+am64xx-evm
+am64xx-hsevm
+
+# AM65x Family (Cortex-A53)
+am65xx-evm
+am65xx-hsevm
+
+# AM335x Family (Cortex-A8)
+beaglebone
+beaglebone-yocto
+
+# AM437x Family (Cortex-A9)
+am437x-evm
+
+# AM57xx Family (Cortex-A15)
+am57xx-evm
+am57xx-hs-evm
+
+# J7 Family (Cortex-A72)
+j721e-evm
+j721e-hs-evm
+j7200-evm
+j7200-hs-evm
+j721s2-evm
+j721s2-hs-evm
+j784s4-evm
+j784s4-hs-evm

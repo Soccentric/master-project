@@ -1,0 +1,30 @@
+# Texas Instruments Board Family
+# Auto-generated board information
+
+FAMILY_NAME="Texas Instruments"
+FAMILY_ID="texas-instruments"
+CONFIG_FILE="texas-instruments.yml"
+VENDOR="Texas Instruments"
+YOCTO_BRANCH="scarthgap"
+META_LAYER="meta-ti"
+INIT_SYSTEM="systemd"
+
+# Key Features
+FEATURES=(
+    "AM62x Low Power Processors"
+    "AM64x Industrial Processors"
+    "AM65x High Performance Industrial"
+    "Sitara ARM Processors"
+    "Jacinto Automotive/ADAS"
+    "BeagleBone Support"
+)
+
+# Repository URLs
+REPO_POKY="https://git.yoctoproject.org/poky"
+REPO_META_TI="https://git.yoctoproject.org/meta-ti"
+REPO_META_ARM="https://git.yoctoproject.org/meta-arm"
+
+# Documentation
+DOC_URL="https://software-dl.ti.com/processor-sdk-linux/esd/docs/"
+FORUM_URL="https://e2e.ti.com/"
+WIKI_URL="https://processors.wiki.ti.com/"

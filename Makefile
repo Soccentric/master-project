@@ -231,6 +231,7 @@ build: prerequisites docker-build
 		echo "  • xilinx-zynq"; \
 		echo "  • nvidia-jetson"; \
 		echo "  • nxp-imx"; \
+		echo "  • texas-instruments"; \
 		exit 1; \
 	fi
 
@@ -521,6 +522,14 @@ list:
 	@grep -v "^#" boards/nxp-imx/.machines | grep -v "^$$" | sed 's/^/    $(COLOR_GREEN)•$(COLOR_RESET) /'
 	@echo -e "  $(COLOR_YELLOW)Targets:$(COLOR_RESET)"
 	@grep -v "^#" boards/nxp-imx/.targets | grep -v "^$$" | sed 's/^/    $(COLOR_GREEN)•$(COLOR_RESET) /'
+	@echo ""
+	@echo -e "$(COLOR_BOLD)Texas Instruments:$(COLOR_RESET)"
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "  Family:" "texas-instruments"
+	@printf "$(COLOR_CYAN)%-25s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "  Config:" "boards/texas-instruments/texas-instruments.yml"
+	@echo -e "  $(COLOR_YELLOW)Machines:$(COLOR_RESET)"
+	@grep -v "^#" boards/texas-instruments/.machines | grep -v "^$$" | sed 's/^/    $(COLOR_GREEN)•$(COLOR_RESET) /'
+	@echo -e "  $(COLOR_YELLOW)Targets:$(COLOR_RESET)"
+	@grep -v "^#" boards/texas-instruments/.targets | grep -v "^$$" | sed 's/^/    $(COLOR_GREEN)•$(COLOR_RESET) /'
 
 .PHONY: info
 info:
@@ -672,6 +681,7 @@ help:
 	@printf "$(COLOR_MAGENTA)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "• xilinx-zynq" "Xilinx Zynq/ZynqMP/Versal boards"
 	@printf "$(COLOR_MAGENTA)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "• nvidia-jetson" "NVIDIA Jetson boards"
 	@printf "$(COLOR_MAGENTA)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "• nxp-imx" "NXP i.MX boards"
+	@printf "$(COLOR_MAGENTA)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "• texas-instruments" "Texas Instruments AM62x/AM64x/Sitara boards"
 	@echo ""
 	@echo -e "$(COLOR_BOLD)Tab Completion:$(COLOR_RESET)"
 	@printf "$(COLOR_CYAN)%-35s$(COLOR_RESET) $(COLOR_WHITE)%s$(COLOR_RESET)\n" "make setup-completion" "Setup automatic tab completion"

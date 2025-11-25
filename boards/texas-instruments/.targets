@@ -1,0 +1,28 @@
+# Supported Target Images for Texas Instruments
+# Format: one target image per line
+# Lines starting with # are comments
+
+# Standard Yocto images
+core-image-base
+core-image-minimal
+core-image-full-cmdline
+core-image-sato
+core-image-weston
+
+# TI SDK images
+tisdk-default-image
+tisdk-base-image
+tisdk-core-bundle
+tisdk-thinlinux-image
+tisdk-bootstrap-image
+
+# TI Development images
+tisdk-tiny-image
+tisdk-docker-rootfs-image
+tisdk-automotive-image
+tisdk-machine-learning-image
+
+# Standard Arago images
+arago-core-tisdk-image
+arago-base-tisdk-image
+arago-tiny-image

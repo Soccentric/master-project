@@ -1,0 +1,62 @@
+# ==============================================================================
+# Texas Instruments Family Configuration
+# This file serves as the master template for all TI boards (AM62x, AM64x, etc.)
+# Machine and target are substituted from command line arguments
+# ==============================================================================
+
+header:
+  version: 8
+  includes:
+    - boards/common.yml
+
+defaults:
+  repos:
+    branch: scarthgap
+
+machine: __MACHINE__
+distro: poky
+target:
+  - __TARGET__
+
+repos:
+  poky:
+    url: https://git.yoctoproject.org/poky
+    path: sources/texas-instruments/poky
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-ti:
+    url: https://git.yoctoproject.org/meta-ti
+    path: sources/texas-instruments/meta-ti
+    layers:
+      meta-ti-bsp:
+      meta-ti-extras:
+
+  meta-arm:
+    url: https://git.yoctoproject.org/meta-arm
+    path: sources/texas-instruments/meta-arm
+    layers:
+      meta-arm:
+      meta-arm-toolchain:
+
+  meta-openembedded:
+    url: https://git.yoctoproject.org/meta-openembedded
+    path: sources/texas-instruments/meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+
+local_conf_header:
+  systemd: |
+    # Use systemd as init manager
+    DISTRO_FEATURES:append = " systemd"
+    VIRTUAL-RUNTIME_init_manager = "systemd"
+    DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+  rootfs_space: |
+    # Allocate extra rootfs space (2GB)
+    IMAGE_ROOTFS_EXTRA_SPACE = "2097152"
+  add_user: |
+    EXTRA_USERS_PARAMS = "useradd -m -p '' ti; usermod -a -G sudo ti;"

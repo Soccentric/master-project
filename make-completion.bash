@@ -4,7 +4,7 @@
 
 # Function to get list of available board families
 _get_families() {
-    echo "raspberry-pi xilinx-zynq nvidia-jetson nxp-imx"
+    echo "raspberry-pi xilinx-zynq nvidia-jetson nxp-imx texas-instruments"
 }
 
 # Function to get list of supported machines for a family
