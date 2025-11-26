@@ -33,17 +33,9 @@ repos:
 
   meta-openembedded:
     url: https://github.com/soc-imx-oss/meta-openembedded
-
     path: sources/nxp-imx/meta-openembedded
     layers:
       meta-oe: null
-      meta-filesystems: null
-      meta-gnome: null
-      meta-xfce: null
-      meta-initramfs: null
-      meta-networking: null
-      meta-multimedia: null
-      meta-python: null
 
   meta-yocto:
     url: https://github.com/soc-imx-oss/meta-yocto
@@ -90,3 +82,4 @@ local_conf_header:
     EXTRA_USERS_PARAMS = "useradd -m -p '' imx; usermod -a -G sudo imx;"
   layer-compat: |
     LAYERSERIES_COMPAT_imx-frdm-release = "scarthgap"
+    LAYERSERIES_CORENAMES = "scarthgap"

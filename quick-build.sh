@@ -6,8 +6,8 @@
 #make build nvidia-jetson jetson-agx-orin-devkit core-image-full-cmdline
 #make sdk nvidia-jetson jetson-agx-orin-devkit core-image-full-cmdline
 
-make build nxp-imx imx93frdm core-image-full-cmdline
+#make build nxp-imx imx93frdm core-image-full-cmdline
 #make sdk nxp-imx imx93frdm core-image-full-cmdline
 
-#make  build xilinx-zynq zynqmp-ev-generic core-image-full-cmdline
-#make sdk xilinx-zynq zynqmp-ev-generic core-image-full-cmdline  
+make  build xilinx-zynq k26-smk-kr core-image-full-cmdline
+#make sdk xilinx-zynq k26-smk-kr core-image-full-cmdline  
