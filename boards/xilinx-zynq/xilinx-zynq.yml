@@ -173,9 +173,4 @@ local_conf_header:
 
   skip_recipes: |
     # Skip problematic recipes with deprecated protocols or license issues
-    SKIP_RECIPE[wilc3000-fw] = "Uses deprecated git protocol"
-    SKIP_RECIPE[mwifiex-fw] = "Uses deprecated git protocol"
-    SKIP_RECIPE[connman-gtk] = "Missing branch parameter"
-    SKIP_RECIPE[sick-scan-xd] = "Invalid license format"
-    SKIP_RECIPE[off-highway-can] = "Invalid license format"
-    SKIP_RECIPE[babeltrace] = "Uses deprecated distutils classes"
+

@@ -22,6 +22,7 @@ repos:
   poky:
     url: https://git.yoctoproject.org/poky
     path: sources/texas-instruments/poky
+    branch: scarthgap
     layers:
       meta:
       meta-poky:
@@ -52,7 +53,7 @@ repos:
 local_conf_header:
   systemd: |
     # Use systemd as init manager
-    DISTRO_FEATURES:append = " systemd"
+    DISTRO_FEATURES:append = " systemd usrmerge"
     VIRTUAL-RUNTIME_init_manager = "systemd"
     DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
   rootfs_space: |
@@ -60,3 +61,5 @@ local_conf_header:
     IMAGE_ROOTFS_EXTRA_SPACE = "2097152"
   add_user: |
     EXTRA_USERS_PARAMS = "useradd -m -p '' ti; usermod -a -G sudo ti;"
+  tools_sdk: |
+    IMAGE_FEATURES:append = " tools-sdk"
