@@ -42,7 +42,7 @@ repos:
       meta-arm-toolchain:
 
   meta-openembedded:
-    url: https://git.yoctoproject.org/meta-openembedded
+    url: https://github.com/openembedded/meta-openembedded
     path: sources/texas-instruments/meta-openembedded
     layers:
       meta-oe:
