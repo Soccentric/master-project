@@ -9,8 +9,8 @@
 #make build nxp-imx imx93frdm core-image-full-cmdline
 #make sdk nxp-imx imx93frdm core-image-full-cmdline
 
-#make  build xilinx-zynq k26-smk-kr core-image-full-cmdline
+make  build xilinx-zynq k26-smk-kr core-image-full-cmdline
 #make sdk xilinx-zynq k26-smk-kr core-image-full-cmdline  
 
-make build texas-instruments am62xx-evm tisdk-default-image
-make sdk texas-instruments am62xx-evm tisdk-default-image
+#make build texas-instruments am62xx-evm tisdk-default-image
+#make sdk texas-instruments am62xx-evm tisdk-default-image
